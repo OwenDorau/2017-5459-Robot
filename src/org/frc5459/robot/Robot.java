@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
     	bottomRight.setControlMode(ControlMode.FOLLOWER); //TalonSRX #3
     	bottomRight.withTarget(topRight.getDeviceID());
     	//climber is the climber Motor (TalonSRX #4)
-    	//TopLeft is Right Side Master (TalonSRX #5)
+    	//TopLeft is Left Side Master (TalonSRX #5)
     	topLeft.withGains(0.1, 0.001, 0.0);
     	topLeft.setFeedbackDevice(FeedbackDevice.MAGNETIC_ENCODER_ABSOLUTE);
     	middleLeft.setControlMode(ControlMode.FOLLOWER); //TalonSRX #6
