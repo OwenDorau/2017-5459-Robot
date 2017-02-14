@@ -118,7 +118,7 @@ public class Drive5459 {
 		rightController.withTarget(targetAngle);
 		this.targetAngle = targetAngle;
 	}
-	
+	//TODO: add the current value to the target
 	public void setEncoderTargetAngleLeft(double targetAngle){
 		leftController.setStatusFrameRate(StatusFrameRate.FEEDBACK, 20);
 		leftController.setControlMode(ControlMode.POSITION);
