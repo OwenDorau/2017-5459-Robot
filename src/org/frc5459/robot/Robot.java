@@ -124,7 +124,7 @@ public class Robot extends IterativeRobot {
 			//Strongback.submit(new BucketRetractCommand(bucket));
 			bucket.retract();
 		}
-
+    	reactor.whileTriggered(driver.getA(), () -> Strongback.submit(new AutoGearLoadCommand(drive, new TurnToCommand())));
     	//reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
     	//reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
 //    	distance = dataBase.getNumber("Distance", 0.0);
