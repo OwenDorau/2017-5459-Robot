@@ -21,6 +21,7 @@ public class Drive5459 {
 	private ADIS16448IMU imu;
 	private Solenoid gearShift;
 	private double targetAngle;
+	
 	String[] rightControllerValues = new String[8];
 	String[] leftControllerValues = new String[8];
 	
@@ -34,6 +35,8 @@ public class Drive5459 {
 	private long deltaLeft;
 	private long deltaCount;
 	private long displacement;
+	private double rightGoal = 0;
+	private double leftGoal = 0;
 	double inchPerSec;
 
 	private currentGear gear;
@@ -111,19 +114,26 @@ public class Drive5459 {
 		leftController.setControlMode(ControlMode.SPEED);
 		leftController.setSpeed(power); 
 	}
-	
+	/**
+	 * 
+	 * @param targetAngle
+	 */
 	public void setEncoderTargetAngleRight(double targetAngle){
 		rightController.setStatusFrameRate(StatusFrameRate.FEEDBACK, 20);
 		rightController.setControlMode(ControlMode.POSITION);
-		rightController.withTarget(targetAngle);
 		this.targetAngle = targetAngle;
+		this.rightGoal = rightController.getValue() + targetAngle;
+		rightController.withTarget(rightGoal);
+		
 	}
 	//TODO: add the current value to the target
 	public void setEncoderTargetAngleLeft(double targetAngle){
 		leftController.setStatusFrameRate(StatusFrameRate.FEEDBACK, 20);
 		leftController.setControlMode(ControlMode.POSITION);
-		leftController.withTarget(targetAngle);
 		this.targetAngle = targetAngle;
+		this.leftGoal = leftController.getValue() +  targetAngle;
+		leftController.withTarget(leftGoal);
+		
 	}
 	
 	public double rightEncoderValue(){
@@ -170,15 +180,25 @@ public class Drive5459 {
 	public currentGear getCurrentGear(){
 		return gear;
 	}
+	
 	public double getRightPower(){
 		return rightController.getSpeed();
 	}
-	
 	public double getLeftPower(){
 		return leftController.getSpeed();
 	}
-	
-	//TODO write get acceleration methods
+	/**
+	 * REMINDER: The imu is vertical and sideways
+	 */
+	public double getAccelX(){
+		return imu.getAccelX();
+	}
+	public double getAccelY(){
+		return imu.getAccelY();
+	}
+	public double getAccelZ(){
+		return imu.getAccelZ();
+	}
 	
 	public void setDriverEnabled(boolean state){
 		this.driverEnabled = state;
