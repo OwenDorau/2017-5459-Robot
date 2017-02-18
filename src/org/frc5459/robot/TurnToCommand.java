@@ -1,29 +1,36 @@
 package org.frc5459.robot;
 
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import org.strongback.command.Command;
 
-public class TurnToCommand extends Command{
+import oracle.jrockit.jfr.ProducerDescriptor;
+
+public class TurnToCommand extends Command 
+implements Consumer<Double> {
 
 	Drive5459 drive;
-	double targetTurn;
-	double a;
+	DoubleSupplier targetTurn;
+	double trueTurnThis;
 	double b;
 	double c;
 	Drive5459 rightController;
-	
+	DoubleConsumer turnThis; //implemented later
 	public TurnToCommand(){
-		this.targetTurn = 0;
+		this.targetTurn = null;
 		this.drive = null;
 	}
 	
-	public TurnToCommand(double targetTurn){
+	public TurnToCommand(DoubleSupplier targetTurn){
 		this.targetTurn = targetTurn;
 		this.drive = drive;
-		
+		trueTurnThis = turnThis;s
 		
 	}
 	public boolean execute(){
-		
+		drive.setSpeedRight(trueTurnThis);
 		
 		
 		/*
@@ -44,12 +51,19 @@ public class TurnToCommand extends Command{
 				drive.setSpeedLeft(1.0);
 			}
 		}
+		*/
 		if(a != b){
 			return false;
 		}else{
 			return true;
 		}
-		*/
+		
+		
+	}
+
+	@Override
+	public void accept(Double t) {
+		// TODO Auto-generated method stub
 		
 	}
 }
