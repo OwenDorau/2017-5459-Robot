@@ -23,9 +23,16 @@ public class TurnToCommand extends Command{
 		
 	}
 	public boolean execute(){
+		
+		
+		
+		/*
 		b = targetTurn;
 		a = drive.imuY(); //needs current rotation
 		c = a - b; //above
+		
+		
+		
 		if(a != b){
 			if (c >= 90){
 				//where left is put
@@ -42,7 +49,7 @@ public class TurnToCommand extends Command{
 		}else{
 			return true;
 		}
-		
+		*/
 		
 	}
 }

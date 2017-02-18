@@ -14,7 +14,7 @@ public class StopClimbCommand extends Command{
 
 	@Override
 	public boolean execute(){
-		ClimberMotor.stop();;
+		ClimberMotor.stop();
 		return true;
 	}
 }

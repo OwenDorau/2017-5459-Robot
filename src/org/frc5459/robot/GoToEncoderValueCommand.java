@@ -1,4 +1,4 @@
-package org.frc5459.robot;
+ package org.frc5459.robot;
 
 import org.strongback.command.Command;
 
@@ -6,7 +6,8 @@ public class GoToEncoderValueCommand extends Command {
 
 	Drive5459 drive;
 	double targetDistance;
-	double distance;
+	double leftDistance;
+	double rightDistance;
 	double encoderGlobalVariable;
 	double trueTargetDistance;
 	
@@ -20,18 +21,18 @@ public class GoToEncoderValueCommand extends Command {
 	}
 	public boolean execute(){
 		targetDistance = encoderGlobalVariable;
-//		distance = Drive5459.getEncoderValue();
-		trueTargetDistance = targetDistance * 325.9493234522016;
-		if(trueTargetDistance != distance){
-			drive.setSpeedRight(1.0);
-			drive.setSpeedLeft(1.0);
+    	leftDistance = drive.leftEncoderValue();
+    	rightDistance = drive.rightEncoderValue();
+		trueTargetDistance = targetDistance * 325.9493234522016; //end up in steps
+		if(trueTargetDistance != leftDistance){
+			drive.setEncoderTargetAngleLeft(trueTargetDistance);
+		}
+
+		if(trueTargetDistance != rightDistance){
+			drive.setEncoderTargetAngleRight(trueTargetDistance);
 		}
 		
-		if(trueTargetDistance == distance){
-			return true;
-		}else{
-			return false;
-		}
+		return true;
 		
 	}
 	

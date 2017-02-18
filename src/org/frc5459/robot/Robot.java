@@ -1,4 +1,4 @@
-/* Created Sat Jan 14 09:56:00 EST 2017 */
+
 package org.frc5459.robot;
 
 import org.strongback.Strongback;
@@ -8,12 +8,13 @@ import org.strongback.components.DistanceSensor;
 import org.strongback.components.Solenoid;
 import org.strongback.components.Solenoid.Direction;
 import org.strongback.components.TalonSRX.FeedbackDevice;
+import org.strongback.components.ui.FlightStick;
 import org.strongback.components.ui.Gamepad;
+import org.strongback.control.SoftwarePIDController;
 import org.strongback.control.TalonController;
 import org.strongback.control.TalonController.ControlMode;
 import org.strongback.hardware.Hardware;
-import org.frc5459.robot.BucketExtendCommand;
-import org.frc5459.robot.BucketRetractCommand;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
@@ -40,6 +41,7 @@ public class Robot extends IterativeRobot {
 	private double horizontalDistance;
 	private double rotationalAngle;
 	private Drive5459 drive;
+	private SoftwarePIDController turnToPID;
 	
 
 
@@ -47,12 +49,12 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	//User Interfaces
     	driver = Hardware.HumanInterfaceDevices.xbox360(0);
-    	operator = Hardware.HumanInterfaceDevices.xbox360(1);
+    	//operator = Hardware.HumanInterfaceDevices.xbox360(1);
     	reactor = Strongback.switchReactor();
     	
     	//Manipulator 
-    	bucket = Hardware.Solenoids.doubleSolenoid(0, 1, Direction.EXTENDING);
-    	//11.37
+    	bucket = Hardware.Solenoids.doubleSolenoid(0, 1, Direction.RETRACTING);
+    	System.out.println("hi");
     	//Motors and Controllers
     	shifter = Hardware.Solenoids.doubleSolenoid(2, 3, Direction.EXTENDING);
     	topRight = Hardware.Controllers.talonController(1, 11.37, 0); //TalonSRX #1
@@ -63,6 +65,7 @@ public class Robot extends IterativeRobot {
     	middleLeft = Hardware.Controllers.talonController(6, 11.37,0); //TalonSRX #6
     	bottomRight = Hardware.Controllers.talonController(7, 11.37,0); //TalonSRX #7
     	climber.reverseOutput(true);
+    	System.out.println("hello");
     	
     	//Setting Followers
     	//topRight is Right Side Master (TalonSRX #1)
@@ -79,13 +82,13 @@ public class Robot extends IterativeRobot {
     	topLeft.reverseOutput(true);
     	middleLeft.setControlMode(ControlMode.FOLLOWER); //TalonSRX #6
     	middleLeft.withTarget(topLeft.getDeviceID());
-    	bottomLeft.setControlMode(ControlMode.FOLLOWER); //TalonSRX #7
-    	bottomLeft.withTarget(topLeft.getDeviceID());
+    	//bottomLeft.setControlMode(ControlMode.FOLLOWER); //TalonSRX #7
+    	//bottomLeft.withTarget(topLeft.getDeviceID());
     	//Sensors
-    	imu = new ADIS16448IMU();
+    	//imu = new ADIS16448IMU();
     	//drive
-    	drive = new Drive5459(topRight, topLeft, ultraX, ultraY, imu, shifter);
-    	dataBase = NetworkTable.getTable("SmartDashboard");
+    	drive = new Drive5459(topRight, topLeft, ultraX, ultraY, null, shifter);
+    	//dataBase = NetworkTable.getTable("DataBase");
 
   
     }   
@@ -108,25 +111,31 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void teleopInit() {
-        Strongback.submit(new TeleopDriveCommand(drive, driver));
+    	Strongback.start();
+    	//Strongback.submit(new TeleopDriveCommand(drive, driver));
     }
 
     @Override
     public void teleopPeriodic() {    	
-    	if (operator.getRightTrigger().read() > 0.5) {
-    		Strongback.submit(new BucketExtendCommand(bucket));
-		}else if( operator.getLeftTrigger().read() > 0.5){
-			Strongback.submit(new BucketRetractCommand(bucket));
+    	if (driver.getRightBumper().isTriggered()) {
+    		//Strongback.submit(new BucketExtendCommand(bucket));
+    		bucket.extend();
+		}else if( driver.getLeftBumper().isTriggered()){
+			//Strongback.submit(new BucketRetractCommand(bucket));
+			bucket.retract();
 		}
 
-    	reactor.whileTriggered(operator.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
-    	reactor.whileUntriggered(operator.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
-    	distance = dataBase.getNumber("Distance", 0.0);
-    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
-    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
-    	System.out.println(distance);
-    	System.out.println(horizontalDistance);
-    	System.out.println(rotationalAngle);
+    	//reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
+    	//reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
+//    	distance = dataBase.getNumber("Distance", 0.0);
+//    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
+//    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
+//    	double angle = dataBase.getNumber("angle", 0);
+//    	System.out.println("The distance to the target is" + distance);
+//    	System.out.println("The horizontal distance is " + horizontalDistance);
+//    	System.out.println("The first angle is " + rotationalAngle + ".  The second one (based on dis) is " + angle);
+//    	//TODO: test the drive train today and try to get raspi done as well
+    	Timer.delay(0.05);
     }
 
     @Override
