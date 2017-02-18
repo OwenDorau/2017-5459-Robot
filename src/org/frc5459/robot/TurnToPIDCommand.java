@@ -11,7 +11,7 @@ SoftwarePIDController turnToPid;
 DataRecorder recorder;
 
 	public TurnToPIDCommand(){
-		this.turnToPid = turnToPid;    
+		//this.turnToPid = new SoftwarePIDController(sourceType, source, output)    
 		turnToPid.withGains(5, 5, 0); //needs testing
 		turnToPid.withInputRange(-1, 1); //needs testing
 		turnToPid.withOutputRange(-1, 1);

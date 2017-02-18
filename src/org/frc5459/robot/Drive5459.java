@@ -6,7 +6,7 @@ import org.strongback.components.Solenoid;
 import org.strongback.components.TalonSRX.StatusFrameRate;
 import org.strongback.control.TalonController;
 import org.strongback.control.TalonController.ControlMode;
-
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.strongback.components.DistanceSensor;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -38,6 +38,8 @@ public class Drive5459 {
 
 	private currentGear gear;
 	private boolean driverEnabled = true;
+	private TalonController topRight;
+	private TalonController topLeft;
 
 	
 	public static enum currentGear{
@@ -46,7 +48,7 @@ public class Drive5459 {
 	}
 	
 
-	public Drive5459(TalonController right, TalonController left, DistanceSensor ultraX, DistanceSensor ultraY, ADIS16448IMU imu, Solenoid gearShift){
+	public Drive5459(TalonController right, TalonController left, DistanceSensor ultraX, DistanceSensor ultraY, ADIS16448IMU imu, Solenoid gearShift,TalonController topRight,TalonController topLeft ){
 		this.ultraX = ultraX;
 		this.ultraY = ultraY;
 		this.imu = imu;
@@ -54,6 +56,8 @@ public class Drive5459 {
 		this.rightController = right;
 		this.leftController = left;
 		this.gear = currentGear.LOWGEAR;
+		this.topRight = topRight;
+		this.topLeft = topLeft;
 		
 	}
 	
@@ -105,17 +109,21 @@ public class Drive5459 {
 	public void setSpeedRight(double power){
 		rightController.setControlMode(ControlMode.SPEED);
 		rightController.setSpeed(power);
+		updateTop();
+		
 	}
 	
 	public void setSpeedLeft(double power){
 		leftController.setControlMode(ControlMode.SPEED);
 		leftController.setSpeed(power); 
+		updateTop();
 	}
 	
 	public void setEncoderTargetAngleRight(double targetAngle){
 		rightController.setStatusFrameRate(StatusFrameRate.FEEDBACK, 20);
 		rightController.setControlMode(ControlMode.POSITION);
 		rightController.withTarget(targetAngle);
+		
 		this.targetAngle = targetAngle;
 	}
 	//TODO: add the current value to the target
@@ -189,7 +197,12 @@ public class Drive5459 {
 		return this.driverEnabled;
 	}
 	
-	
+	public void updateTop(){
+		topRight.setControlMode(ControlMode.SPEED);
+		topLeft.setControlMode(ControlMode.SPEED);
+		topLeft.setSpeed(leftController.getSpeed());
+		topRight.setSpeed(rightController.getSpeed());
+	}
 	
 
 }

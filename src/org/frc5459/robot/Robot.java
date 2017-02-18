@@ -69,27 +69,27 @@ public class Robot extends IterativeRobot {
     	
     	//Setting Followers
     	//topRight is Right Side Master (TalonSRX #1)
-//    	middleRight.withGains(0.062, 0.00062, 0.62);//TODO: make multiple profiles
-//    	middleRight.setFeedbackDevice(FeedbackDevice.MAGNETIC_ENCODER_ABSOLUTE);
+    	middleRight.withGains(0.062, 0.00062, 0.62);//TODO: make multiple profiles
+    	middleRight.setFeedbackDevice(FeedbackDevice.MAGNETIC_ENCODER_ABSOLUTE);
     	topRight.setControlMode(ControlMode.FOLLOWER);//TalonSRX #2
     	topRight.withTarget(middleRight.getDeviceID());
-    	topRight.reverseOutput(true);
+//    	topRight.reverseOutput(true);
     	bottomRight.setControlMode(ControlMode.FOLLOWER); //TalonSRX #3
     	bottomRight.withTarget(middleRight.getDeviceID());
     	//climber is the climber Motor (TalonSRX #4)
     	//TopLeft is Right Side Master (TalonSRX #5)
-//    	middleLeft.withGains(0.062, 0.00062, 0.62);
-//    	middleLeft.setFeedbackDevice(FeedbackDevice.MAGNETIC_ENCODER_ABSOLUTE);
+    	middleLeft.withGains(0.062, 0.00062, 0.62);
+    	middleLeft.setFeedbackDevice(FeedbackDevice.MAGNETIC_ENCODER_ABSOLUTE);
     	
     	topLeft.setControlMode(ControlMode.FOLLOWER); //TalonSRX #6
     	topLeft.withTarget(middleLeft.getDeviceID());
-    	topLeft.reverseOutput(true);
+    	//topLeft.reverseOutput(true);
     	bottomLeft.setControlMode(ControlMode.FOLLOWER); //TalonSRX #7
     	bottomLeft.withTarget(middleLeft.getDeviceID());
     	//Sensors
     	imu = new ADIS16448IMU();
     	//drive
-    	drive = new Drive5459(middleRight, middleLeft, ultraX, ultraY, imu, null);
+    	drive = new Drive5459(middleRight, middleLeft, ultraX, ultraY, imu, null,topRight,topLeft);
     	//dataBase = NetworkTable.getTable("DataBase");
 
   
@@ -108,7 +108,7 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
     	
     	
-    	
+    	drive.updateTop();
     }
     
     @Override
@@ -134,6 +134,10 @@ public class Robot extends IterativeRobot {
 //		}
     	drive.setSpeedLeft(-driver.getLeftY().read());
 		drive.setSpeedRight(driver.getRightY().read());
+//		if (driver.getLeftBumper().isTriggered()) {
+//			topLeft.setSpeed(1.0);	
+//			topRight.setSpeed(1.0);
+//		}
     	reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
     	reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
 //    	distance = dataBase.getNumber("Distance", 0.0);
@@ -145,6 +149,7 @@ public class Robot extends IterativeRobot {
 //    	System.out.println("The first angle is " + rotationalAngle + ".  The second one (based on dis) is " + angle);
 //    	//TODO: test the drive train today and try to get raspi done as well
 //    	Timer.delay(0.05);
+    	drive.updateTop();
     }
 
     @Override
