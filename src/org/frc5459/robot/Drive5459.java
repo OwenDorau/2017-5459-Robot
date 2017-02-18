@@ -204,7 +204,6 @@ public class Drive5459 {
 		this.driverEnabled = state;
 	}
 	
-	
 	public boolean isDriverEnabled(){
 		return this.driverEnabled;
 	}
