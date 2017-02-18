@@ -50,6 +50,6 @@ public class TurnToCommand extends Command{
 			return true;
 		}
 		*/
-		
+		return true;
 	}
 }
