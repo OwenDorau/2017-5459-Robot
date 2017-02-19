@@ -17,6 +17,7 @@ import org.strongback.hardware.Hardware;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot {
@@ -115,6 +116,10 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
     	Strongback.start();
     	//Strongback.submit(new TeleopDriveCommand(drive, driver));
+      //SmartDashboard.putData(key, data);
+    	//("turning PID controller gains", turnToPID.getGainsFor(2));
+    	//SmartDashboard.putData("turning PID controller I", turnToPID.getTarget());
+    	turnToPID.startLiveWindowMode();
     }
 
     @Override
@@ -158,4 +163,5 @@ public class Robot extends IterativeRobot {
     
     
 }
+
 
