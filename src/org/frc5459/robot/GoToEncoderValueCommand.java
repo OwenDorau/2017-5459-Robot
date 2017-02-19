@@ -8,7 +8,7 @@ public class GoToEncoderValueCommand extends Command {
 	double targetDistance;
 	double leftDistance;
 	double rightDistance;
-	double encoderGlobalVariable;
+	
 	double trueTargetDistance;
 	
 	public GoToEncoderValueCommand(){
@@ -20,7 +20,6 @@ public class GoToEncoderValueCommand extends Command {
 		this.drive = drive;
 	}
 	public boolean execute(){
-		targetDistance = encoderGlobalVariable;
     	leftDistance = drive.leftEncoderValue();
     	rightDistance = drive.rightEncoderValue();
 		trueTargetDistance = targetDistance * 325.9493234522016; //end up in steps

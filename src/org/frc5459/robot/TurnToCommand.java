@@ -1,55 +1,62 @@
 package org.frc5459.robot;
 
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import org.strongback.command.Command;
 
-public class TurnToCommand extends Command{
+import oracle.jrockit.jfr.ProducerDescriptor;
+
+public class TurnToCommand extends Command 
+implements Consumer<Double> {
 
 	Drive5459 drive;
-	double targetTurn;
-	double a;
-	double b;
-	double c;
+	DoubleSupplier targetTurn;
+	double trueTargetTurn;
+	double trueTurnThisLeft;
+	double trueTurnThisRight;
+	double trueTurnThis;
 	Drive5459 rightController;
-	
+	DoubleConsumer turnThis; 
+	double currentRotation;
 	public TurnToCommand(){
-		this.targetTurn = 0;
+		this.targetTurn = null;
 		this.drive = null;
 	}
 	
-	public TurnToCommand(double targetTurn){
+	public TurnToCommand(DoubleSupplier targetTurn, DoubleConsumer turnThis){
 		this.targetTurn = targetTurn;
 		this.drive = drive;
+		this.turnThis = turnThis; 
+		currentRotation = drive.imuY();
+		trueTurnThisLeft = trueTurnThis * -1;
+		trueTurnThisRight = trueTurnThis;
+		trueTargetTurn = targetTurn.getAsDouble();
 		
 		
 	}
 	public boolean execute(){
+		drive.setSpeedRight(trueTurnThisRight);
+		drive.setSpeedLeft(trueTurnThisLeft); //inverted above
 		
 		
 		
-		/*
-		b = targetTurn;
-		a = drive.imuY(); //needs current rotation
-		c = a - b; //above
-		
-		
-		
-		if(a != b){
-			if (c >= 90){
-				//where left is put
-				drive.setSpeedRight(1.0);
-				drive.setSpeedLeft(-1.0);
-			}else{
-				//where right is put
-				drive.setSpeedRight(-1.0);
-				drive.setSpeedLeft(1.0);
-			}
-		}
-		if(a != b){
+		if(currentRotation !=  trueTargetTurn){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			return false;
 		}else{
 			return true;
 		}
-		*/
-		return true;
+
+		
+		
 	}
+
+	@Override 
+	public void accept(Double trueturnThis) {
+		
+
+	}
+	
+	
 }

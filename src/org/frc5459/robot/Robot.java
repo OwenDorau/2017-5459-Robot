@@ -103,14 +103,22 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopInit() {
     	Strongback.start();
+
+    	//Strongback.submit(new TeleopDriveCommand(drive, driver));
+      //SmartDashboard.putData(key, data);
+    	//("turning PID controller gains", turnToPID.getGainsFor(2));
+    	//SmartDashboard.putData("turning PID controller I", turnToPID.getTarget());
+    	turnToPID.startLiveWindowMode();
     }
 
     @Override
     public void teleopPeriodic() {    	
+
 //    	if (operator.getRightBumper().isTriggered()) {
 //    		Strongback.submit(new BucketExtendCommand(bucket));
 //		}else if( operator.getLeftBumper().isTriggered()){
 //			Strongback.submit(new BucketRetractCommand(bucket));
+
 //		}
 //    	if (driver.getA().isTriggered()) {
 //			shifter.extend();
@@ -133,6 +141,7 @@ public class Robot extends IterativeRobot {
     	drive.setSpeedRight(1.0);
     	reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
     	reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
+
 //    	distance = dataBase.getNumber("Distance", 0.0);
 //    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
 //    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
@@ -155,4 +164,5 @@ public class Robot extends IterativeRobot {
     
     
 }
+
 
