@@ -1,6 +1,7 @@
 
 package org.frc5459.robot;
 
+import org.strongback.DataRecorder;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 
@@ -17,6 +18,7 @@ import org.strongback.hardware.Hardware;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot {
@@ -113,6 +115,11 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopInit() {
     	Strongback.start();
+    	//SmartDashboard.putData(key, data);
+    	//("turning PID controller gains", turnToPID.getGainsFor(2));
+    	//SmartDashboard.putData("turning PID controller I", turnToPID.getTarget());
+    	turnToPID.startLiveWindowMode();
+    	
     	//Strongback.submit(new TeleopDriveCommand(drive, driver));
     }
 
@@ -143,6 +150,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() {
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
         Strongback.disable();
+        turnToPID.stopLiveWindowMode();
     }
 
     

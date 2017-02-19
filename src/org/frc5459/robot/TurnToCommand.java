@@ -13,46 +13,36 @@ implements Consumer<Double> {
 
 	Drive5459 drive;
 	DoubleSupplier targetTurn;
+	double trueTargetTurn;
+	double trueTurnThisLeft;
+	double trueTurnThisRight;
 	double trueTurnThis;
-	double b;
-	double c;
 	Drive5459 rightController;
-	DoubleConsumer turnThis; //implemented later
+	DoubleConsumer turnThis; 
+	double currentRotation;
 	public TurnToCommand(){
 		this.targetTurn = null;
 		this.drive = null;
 	}
 	
-	public TurnToCommand(DoubleSupplier targetTurn){
+	public TurnToCommand(DoubleSupplier targetTurn, DoubleConsumer turnThis){
 		this.targetTurn = targetTurn;
 		this.drive = drive;
-		trueTurnThis = turnThis;s
+		this.turnThis = turnThis; 
+		currentRotation = drive.imuY();
+		trueTurnThisLeft = trueTurnThis * -1;
+		trueTurnThisRight = trueTurnThis;
+		trueTargetTurn = targetTurn.getAsDouble();
+		
 		
 	}
 	public boolean execute(){
-		drive.setSpeedRight(trueTurnThis);
-		
-		
-		/*
-		b = targetTurn;
-		a = drive.imuY(); //needs current rotation
-		c = a - b; //above
+		drive.setSpeedRight(trueTurnThisRight);
+		drive.setSpeedLeft(trueTurnThisLeft); //inverted above
 		
 		
 		
-		if(a != b){
-			if (c >= 90){
-				//where left is put
-				drive.setSpeedRight(1.0);
-				drive.setSpeedLeft(-1.0);
-			}else{
-				//where right is put
-				drive.setSpeedRight(-1.0);
-				drive.setSpeedLeft(1.0);
-			}
-		}
-		*/
-		if(a != b){
+		if(currentRotation !=  trueTargetTurn){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			return false;
 		}else{
 			return true;
@@ -61,9 +51,10 @@ implements Consumer<Double> {
 		
 	}
 
-	@Override
-	public void accept(Double t) {
-		// TODO Auto-generated method stub
+	@Override 
+	public void accept(Double trueturnThis) {
 		
 	}
+	
+	
 }
