@@ -40,7 +40,7 @@ public class Drive5459 {
 	private boolean driverEnabled = true;
 	private TalonController topRight;
 	private TalonController topLeft;
-
+	public boolean doneShifting;
 	
 	public static enum currentGear{
 		HIGHGEAR,
@@ -87,12 +87,12 @@ public class Drive5459 {
 		leftControllerValues[x++] = "" + leftController.getEncoderInput().getHeading();
 	}
 	
-	public void getVelocity(){
+	public double getVelocity(){
 		startCountRight = (long)rightController.getValue();
 		startCountLeft = (long)leftController.getValue();
 		currentTime = System.currentTimeMillis();
-		for (int v = 0; v < 5; v++){
-			Timer.delay(0.02);
+		for (int v = 0; v < 2; v++){
+			Timer.delay(0.01);
 		}
 		endCountRight = (long)rightController.getValue();
 		endCountLeft = (long)leftController.getValue();
@@ -103,18 +103,18 @@ public class Drive5459 {
 		elapsedTime = elapsedTime * 1000;
 		displacement = (long)(deltaCount/375.95);
 		inchPerSec = displacement/deltaCount;
-		
+		return inchPerSec;
 	}
 
 	public void setSpeedRight(double power){
-		rightController.setControlMode(ControlMode.SPEED);
+		rightController.setControlMode(ControlMode.PERCENT_VBUS);
 		rightController.setSpeed(power);
 		updateTop();
 		
 	}
 	
 	public void setSpeedLeft(double power){
-		leftController.setControlMode(ControlMode.SPEED);
+		leftController.setControlMode(ControlMode.PERCENT_VBUS);
 		leftController.setSpeed(power); 
 		updateTop();
 	}
@@ -198,10 +198,10 @@ public class Drive5459 {
 	}
 	
 	public void updateTop(){
-		topRight.setControlMode(ControlMode.SPEED);
-		topLeft.setControlMode(ControlMode.SPEED);
-		topLeft.setSpeed(leftController.getSpeed());
-		topRight.setSpeed(rightController.getSpeed());
+		topRight.setControlMode(ControlMode.PERCENT_VBUS);
+		topLeft.setControlMode(ControlMode.PERCENT_VBUS);
+		topLeft.setSpeed(-leftController.getSpeed());
+		topRight.setSpeed(-rightController.getSpeed());
 	}
 	
 
