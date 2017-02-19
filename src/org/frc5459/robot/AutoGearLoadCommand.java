@@ -26,7 +26,7 @@ public class AutoGearLoadCommand extends Command {
 			drive.setSpeedRight(0.0);
 			drive.setSpeedLeft(0.0);
 		}
-		TurnTo = new TurnToCommand(45);
+		//TurnTo = new TurnToCommand(45);
 		Strongback.submit(TurnTo);
 		ultraYDistance = drive.getUltrasonicY();
 		drive.setSpeedRight(-1.0);

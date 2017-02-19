@@ -53,7 +53,7 @@ public class Vision extends Command{
 		e = Math.sqrt((Math.pow(z, 2) + Math.pow(d, 2) - 2*z*d*Math.cos(w)));
 		disToDrive = (e - d)*325.9493234522016;
 		angleToTurn = Math.asin((z*Math.sin(w))/e);
-		turn =  new TurnToCommand(angleToTurn);
+		//turn =  new TurnToCommand(angleToTurn);
 		Strongback.submit(turn);
 		while(!turn.execute()) {
 			Timer.delay(0.01);

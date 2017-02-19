@@ -108,7 +108,7 @@ public class Robot extends IterativeRobot {
       //SmartDashboard.putData(key, data);
     	//("turning PID controller gains", turnToPID.getGainsFor(2));
     	//SmartDashboard.putData("turning PID controller I", turnToPID.getTarget());
-    	turnToPID.startLiveWindowMode();
+    	//turnToPID.startLiveWindowMode();
     }
 
     @Override
@@ -139,9 +139,13 @@ public class Robot extends IterativeRobot {
 //		}
     	drive.setSpeedLeft(1.0);
     	drive.setSpeedRight(1.0);
-    	reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
-    	reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
-
+//    	reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
+//    	reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
+    	if (driver.getRightBumper().isTriggered()) {
+			Strongback.submit(new AscendClimbCommand(climber));
+		}else {
+			Strongback.submit(new StopClimbCommand(climber));
+		}
 //    	distance = dataBase.getNumber("Distance", 0.0);
 //    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
 //    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
