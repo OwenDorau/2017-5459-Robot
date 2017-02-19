@@ -119,6 +119,7 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopPeriodic() {    	
+
 //    	if (driver.getRightBumper().isTriggered()) {
 //    		//Strongback.submit(new BucketExtendCommand(bucket));
 //    		bucket.extend();
@@ -136,6 +137,7 @@ public class Robot extends IterativeRobot {
 		drive.setSpeedRight(driver.getRightY().read());
     	reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
     	reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
+
 //    	distance = dataBase.getNumber("Distance", 0.0);
 //    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
 //    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
