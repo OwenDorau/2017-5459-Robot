@@ -6,7 +6,6 @@ import org.strongback.command.Command;
 public class AutoGearLoadCommand extends Command {
 	private double ultraXDistance;
 	private double ultraYDistance;
-	private int errorMargin = 2;
 	private Drive5459 drive;
 	private TurnToCommand TurnTo;
 	
@@ -14,15 +13,15 @@ public class AutoGearLoadCommand extends Command {
 	public AutoGearLoadCommand(Drive5459 drive, TurnToCommand TurnTo){
 		this.drive = drive;
 		this.TurnTo = TurnTo;
+		this.ultraXDistance = drive.getUltrasonicX();
 	}
 	
 	@Override
 	public boolean execute(){
 		Strongback.submit(TurnTo);
-		ultraXDistance = drive.getUltrasonicX() + errorMargin;
 		drive.setSpeedRight(-1.0);
 		drive.setSpeedLeft(-1.0);
-		if(drive.getUltrasonicX() + errorMargin != ultraXDistance){
+		if(drive.getUltrasonicX() - (1.2) > ultraXDistance || ultraXDistance < drive.getUltrasonicX() - (1.2)){
 			drive.setSpeedRight(0.0);
 			drive.setSpeedLeft(0.0);
 		}
