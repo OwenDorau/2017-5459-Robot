@@ -48,7 +48,7 @@ public class DisplayData extends Command{
 		//Bucket
 		
 		
-		return false;
+		return true;
 	
 	}
 }
