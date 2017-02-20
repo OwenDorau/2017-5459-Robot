@@ -14,6 +14,7 @@ import org.strongback.control.TalonController;
 import org.strongback.control.TalonController.ControlMode;
 import org.strongback.hardware.Hardware;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +43,9 @@ public class Robot extends IterativeRobot {
 	private double rotationalAngle;
 	private Drive5459 drive;
 	private SoftwarePIDController turnToPID;
+	private VideoSource front;
+	private VideoSource back;
+	private int shifts;
 
 
 
@@ -49,13 +53,13 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	//User Interfaces
     	driver = Hardware.HumanInterfaceDevices.xbox360(0);
-    	//operator = Hardware.HumanInterfaceDevices.xbox360(1);
+    	operator = Hardware.HumanInterfaceDevices.xbox360(1);
     	reactor = Strongback.switchReactor();
     	
     	//Manipulator 
-    	//bucket = Hardware.Solenoids.doubleSolenoid(0, 1, Direction.EXTENDING);
+    	bucket = Hardware.Solenoids.doubleSolenoid(0, 1, Direction.EXTENDING);
     	//Motors and Controllers
-    	//shifter = Hardware.Solenoids.doubleSolenoid(2, 3, Direction.EXTENDING);
+    	shifter = Hardware.Solenoids.doubleSolenoid(2, 3, Direction.EXTENDING);
     	topRight = Hardware.Controllers.talonController(1, 11.37, 0); //TalonSRX #1
     	middleRight = Hardware.Controllers.talonController(2, 11.37, 0); //TalonSRX #2
     	bottomRight = Hardware.Controllers.talonController(3, 11.37, 0); //TalonSRX #3
@@ -88,6 +92,7 @@ public class Robot extends IterativeRobot {
     	//drive
     	drive = new Drive5459(middleRight, middleLeft, ultraX, ultraY, imu, shifter,topRight,topLeft);
     	dataBase = NetworkTable.getTable("DataBase");
+    	// front = VideoSource.
     }   
     
     @Override
@@ -103,7 +108,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopInit() {
     	Strongback.start();
-
+    	
     	//Strongback.submit(new TeleopDriveCommand(drive, driver));
       //SmartDashboard.putData(key, data);
     	//("turning PID controller gains", turnToPID.getGainsFor(2));
@@ -113,47 +118,46 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopPeriodic() {    	
+    	SmartDashboard.putDouble("This is the velocity", drive.getVelocity());
+    	SmartDashboard.putInt("number of shifts", shifts);
+    	if (operator.getRightBumper().isTriggered()) {
+    		Strongback.submit(new BucketExtendCommand(bucket));
+		}else if( operator.getLeftBumper().isTriggered()){
+			Strongback.submit(new BucketRetractCommand(bucket));
 
-//    	if (operator.getRightBumper().isTriggered()) {
-//    		Strongback.submit(new BucketExtendCommand(bucket));
-//		}else if( operator.getLeftBumper().isTriggered()){
-//			Strongback.submit(new BucketRetractCommand(bucket));
-
-//		}
-//    	if (driver.getA().isTriggered()) {
-//			shifter.extend();
-//		}
-//    	if (driver.getB().isTriggered()) {
-//			shifter.retract();
-//		}
-//    	if (!drive.doneShifting) {
-//			if (drive.getVelocity() > 90 && drive.getCurrentGear().equals(currentGear.LOWGEAR)) {
-//				drive.doneShifting = false;
-//				Strongback.submit(new ShiftDownCommand(drive, driver));
-//			}else if (drive.getVelocity() < 70 && drive.getCurrentGear().equals(currentGear.HIGHGEAR)) {
-//				drive.doneShifting = false;
-//				Strongback.submit(new ShiftUpCommand(drive, driver));
-//			}
-//		}else {
-//			Strongback.submit(new TeleopDriveCommand(drive, driver));
-//		}
-    	drive.setSpeedLeft(1.0);
-    	drive.setSpeedRight(1.0);
-//    	reactor.whileTriggered(driver.getRightBumper(), () -> Strongback.submit(new AscendClimbCommand(climber)));
-//    	reactor.whileUntriggered(driver.getRightBumper(), () -> Strongback.submit(new StopClimbCommand(climber)));
+		}
+    	if (driver.getLeftBumper().isTriggered()) {
+			Strongback.submit(new ShiftUpCommand(drive, driver));
+		}
     	if (driver.getRightBumper().isTriggered()) {
+			Strongback.submit(new ShiftDownCommand(drive, driver));
+		}
+    	if (drive.isDriverEnabled()) {
+    		Strongback.submit(new TeleopDriveCommand(drive, driver));
+    	}
+		
+		
+		if (drive.getVelocity() > 15 && drive.getCurrentGear().equals(currentGear.LOWGEAR)) {
+			shifts++;
+			Strongback.submit(new ShiftDownCommand(drive, driver));
+		}else if (drive.getVelocity() < 13 && drive.getCurrentGear().equals(currentGear.HIGHGEAR)) {
+			shifts++;
+			Strongback.submit(new ShiftUpCommand(drive, driver));
+		}
+
+    	if (operator.getA().isTriggered()) { 
 			Strongback.submit(new AscendClimbCommand(climber));
 		}else {
 			Strongback.submit(new StopClimbCommand(climber));
 		}
-//    	distance = dataBase.getNumber("Distance", 0.0);
-//    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
-//    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
-//    	double angle = dataBase.getNumber("angle", 0);
-//    	SmartDashboard.putDouble("this is the distance", distance);
-//    	SmartDashboard.putDouble("Horizontal distance",horizontalDistance);
-//    	SmartDashboard.putDouble("First angle", rotationalAngle);
-//    	SmartDashboard.putDouble("Second one (based on dis)", angle);
+    	distance = dataBase.getNumber("Distance", 0.0);
+    	horizontalDistance = dataBase.getNumber("horizontalDistance", 0.0);
+    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
+    	double angle = dataBase.getNumber("angle", 0);
+    	SmartDashboard.putDouble("this is the distance", distance);
+    	SmartDashboard.putDouble("Horizontal distance",horizontalDistance);
+    	SmartDashboard.putDouble("First angle", rotationalAngle);
+    	SmartDashboard.putDouble("Second one (based on dis)", angle);
 //    	//TODO: test the drive train today and try to get raspi done as well
     	Timer.delay(0.05);
     	drive.updateTop();
