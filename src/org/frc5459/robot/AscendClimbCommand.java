@@ -14,7 +14,7 @@ public class AscendClimbCommand extends Command{
 
 	@Override
 	public boolean execute(){
-		ClimberMotor.setSpeed(-0.5);
+		ClimberMotor.setSpeed(-1.0);
 		return true;
 	}
 	

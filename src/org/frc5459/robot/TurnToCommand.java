@@ -47,6 +47,7 @@ implements Consumer<Double> {
 		}else{
 			return true;
 		}
+
 		
 		
 	}
@@ -54,6 +55,10 @@ implements Consumer<Double> {
 	@Override 
 	public void accept(Double trueturnThis) {
 		
+
+		
+		
+
 	}
 	
 	

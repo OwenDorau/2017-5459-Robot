@@ -45,13 +45,13 @@ public class TeleopDriveCommand extends Command{
 	public boolean execute(){
 		if (drive.isDriverEnabled()) {
 			if (!shifting) {
-				drive.setSpeedLeft(driver.getLeftY().read());
+				drive.setSpeedLeft(-driver.getLeftY().read());
 				drive.setSpeedRight(driver.getRightY().read());
 				currentTime = System.currentTimeMillis();
 				startCountLeft = (long)drive.leftEncoderValue();
 				startCountRight = (long)drive.rightEncoderValue();
-				for (int i = 0; i < 5; i++) {
-					Timer.delay(0.05);
+				for (int i = 0; i < 2; i++) {
+					Timer.delay(0.01);
 				}
 				endCountLeft = (long)drive.leftEncoderValue();
 				endCountRight = (long)drive.rightEncoderValue();
