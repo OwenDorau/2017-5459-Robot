@@ -36,6 +36,7 @@ implements Consumer<Double> {
 		trueTargetTurn = targetTurn.getAsDouble();
 		
 		
+<<<<<<< HEAD
 		
 	}
 	
@@ -43,6 +44,11 @@ implements Consumer<Double> {
 		//return inputTargetTurn.setValue();
 		
 	}
+=======
+	   
+	}
+	
+>>>>>>> 0fd35784eb3a2aca00809df4c9c9c88e3ab63735
 	
 	public boolean execute(){
 		drive.setSpeedRight(trueTurnThisRight);
