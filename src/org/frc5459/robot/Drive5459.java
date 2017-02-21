@@ -2,18 +2,15 @@ package org.frc5459.robot;
 
 
 
+import org.strongback.components.DistanceSensor;
 import org.strongback.components.Solenoid;
-import org.strongback.components.TalonSRX.StatusFrameRate;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-import org.strongback.components.DistanceSensor;
+import edu.wpi.first.wpilibj.RobotDrive;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.frc5459.robot.*;
 
 
 public class Drive5459 {
@@ -41,7 +38,7 @@ public class Drive5459 {
 	private double rightGoal = 0;
 	private double leftGoal = 0;
 	double inchPerSec;
-
+	private RobotDrive drive
 	private currentGear gear;
 	private boolean driverEnabled = true;
 	private CANTalon topRight;
@@ -64,6 +61,7 @@ public class Drive5459 {
 		this.gear = currentGear.LOWGEAR;
 		this.topRight = topRight;
 		this.topLeft = topLeft;
+		this.drive = new  RobotDrive(leftController, rightController);
 		
 	}
 	
@@ -105,6 +103,7 @@ public class Drive5459 {
 	}
 
 	public void setSpeedRight(double power){
+		rightController.setProfile(1);
 		rightController.changeControlMode(TalonControlMode.PercentVbus);
 		rightController.set(-power);
 		
@@ -112,6 +111,7 @@ public class Drive5459 {
 	}
 	
 	public void setSpeedLeft(double power){
+		leftController.setProfile(1);
 		leftController.changeControlMode(TalonControlMode.PercentVbus);
 		leftController.set(power); 
 		
@@ -121,18 +121,20 @@ public class Drive5459 {
 	 * @param targetAngle
 	 */
 	public void setEncoderTargetAngleRight(double targetAngle){
+		rightController.setProfile(0);
 		rightController.changeControlMode(TalonControlMode.Position);
 		this.targetAngle = targetAngle;
 		this.rightGoal = rightController.getPosition() + targetAngle;
-		rightController.set(rightGoal);
+		rightController.set(targetAngle);
 		
 	}
 	//TODO: add the current value to the target
 	public void setEncoderTargetAngleLeft(double targetAngle){
+		leftController.setProfile(0);
 		leftController.changeControlMode(TalonControlMode.Position);
 		this.targetAngle = targetAngle;
 		this.leftGoal = leftController.getPosition() + targetAngle;
-		leftController.set(leftGoal);
+		leftController.set(targetAngle);
 	}
 	
 	public double rightEncoderValue(){
@@ -207,7 +209,9 @@ public class Drive5459 {
 		return this.driverEnabled;
 	}
 	
-	
+	public void arcadeDrive(double power, double rotation){
+		drive.arcadeDrive(power, rotation);
+	}
 	
 
 }
