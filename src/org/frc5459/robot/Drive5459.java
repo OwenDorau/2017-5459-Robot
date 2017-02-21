@@ -10,7 +10,6 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import com.sun.xml.internal.bind.v2.model.core.ID;
 
-
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.strongback.components.DistanceSensor;
 
@@ -100,7 +99,7 @@ public class Drive5459 {
 		startCountRight = rightController.getEncVelocity();
 		startCountLeft = leftController.getEncVelocity();
 		startCountLeft = (startCountLeft + startCountRight)/2;
-		startCountLeft = startCountRight  * Math.PI/180;
+		startCountLeft = (long) (startCountRight  * Math.PI/180);
 		startCountLeft = startCountLeft *2;
 		
 		
