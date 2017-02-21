@@ -30,21 +30,18 @@ public class Vision extends Command{
 		this.dataBase = dataBase;
 		this.peg = 11;
 		this.y = dataBase.getNumber("Distance");
-		this.x = dataBase.getNumber("horizontalDistance");
-		this.theta = dataBase.getNumber("rotationAngle");
+		this.theta = dataBase.getNumber("angle");
+		this.x = this.y/Math.tan(this.theta);
 	}
 	
 	@Override
 	public boolean execute() {
-		if (y != dataBase.getNumber("Distance")){
+		if (y != dataBase.getNumber("Distance") || theta != dataBase.getNumber("angle")){
 			y = dataBase.getNumber("Distance");
+			theta = dataBase.getNumber("angle");
+			x = y/Math.tan(theta);
 		}
-		if (x != dataBase.getNumber("horizontalDistance")) {
-			x = dataBase.getNumber("horizontalDistance");
-		}
-		if (theta != dataBase.getNumber("rotationAngle")) {
-			theta = dataBase.getNumber("rotationAngle");
-		}
+		
 		hyp = Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2)));
 		alpha = 90-theta;
 		z = Math.sqrt((Math.pow(peg, 2) + Math.pow(hyp, 2) - 2*peg*hyp*Math.cos(alpha)));
