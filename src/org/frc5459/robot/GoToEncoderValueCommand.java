@@ -23,13 +23,9 @@ public class GoToEncoderValueCommand extends Command {
     	leftDistance = drive.leftEncoderValue();
     	rightDistance = drive.rightEncoderValue();
 		trueTargetDistance = targetDistance * 325.9493234522016; //end up in steps
-		if(trueTargetDistance != leftDistance){
-			drive.setEncoderTargetAngleLeft(trueTargetDistance);
-		}
-
-		if(trueTargetDistance != rightDistance){
-			drive.setEncoderTargetAngleRight(trueTargetDistance);
-		}
+		drive.setEncoderTargetAngleLeft(trueTargetDistance);
+		drive.setEncoderTargetAngleRight(trueTargetDistance);
+		
 		
 		return true;
 		

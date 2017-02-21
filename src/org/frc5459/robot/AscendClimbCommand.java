@@ -4,17 +4,19 @@ import org.strongback.command.Command;
 import org.strongback.components.Motor;
 import org.strongback.control.TalonController;
 
+import com.ctre.CANTalon;
+
 
 public class AscendClimbCommand extends Command{
-	private TalonController ClimberMotor;
+	private CANTalon ClimberMotor;
 	
-	public AscendClimbCommand(TalonController motor){
+	public AscendClimbCommand(CANTalon motor){
 		this.ClimberMotor = motor;
 	}
 
 	@Override
 	public boolean execute(){
-		ClimberMotor.setSpeed(-1.0);
+		ClimberMotor.set(-1.0);
 		return true;
 	}
 	

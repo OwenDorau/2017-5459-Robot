@@ -20,17 +20,13 @@ TurnToCommand turnToCommand;
 
 	public TurnToPIDCommand(){
 
-		//this.turnToPid = new SoftwarePIDController(sourceType, source, output)    
-		turnToPid.withGains(5, 5, 0); //needs testing
-		turnToPid.withInputRange(-1, 1); //needs testing
-		turnToPid.withOutputRange(-1, 1);
-		turnToPid.withTolerance(1);
-		recorder.register("turnToPid", turnToPid.basicChannels());
-	}
-//=======
-//	this.turnToPid = new SoftwarePIDController(SourceType.DISTANCE,
-//			turnToCommand.targetTurn, 
-//			turnToCommand.turnThis);    
+			
+	
+	
+
+	this.turnToPid = new SoftwarePIDController(SourceType.DISTANCE,
+			turnToCommand.targetTurn, 
+			turnToCommand.turnThis);    
 //	/** 
 //	 *  controller = new SoftwarePIDController(model::sourceType, model::getActualValue, model::setValue)
 //                                                                                                     .withGains(0.9,
@@ -43,13 +39,13 @@ TurnToCommand turnToCommand;
 //                                                                                                         .withTolerance(0.02)
 //                                                                                                         .withTarget(0.5);
 //	 */
-//	turnToPid.withGains(5, 5, 0); //needs testing
-//	turnToPid.withInputRange(-1, 1); //needs testing
-//	turnToPid.withOutputRange(-1, 1);
-//	turnToPid.withTolerance(1);
-//	recorder.register("turnToPid", turnToPid.basicChannels());
-//	turnToPid.useProfile(2);
-//>>>>>>> b221432a353d837b69246db86dd5d1258b103164
+	turnToPid.withGains(5, 5, 0); //needs testing
+	turnToPid.withInputRange(-1, 1); //needs testing
+	turnToPid.withOutputRange(-1, 1);
+	turnToPid.withTolerance(1);
+	recorder.register("turnToPid", turnToPid.basicChannels());
+	turnToPid.useProfile(2);
+
 	
 
 
@@ -89,5 +85,6 @@ TurnToCommand turnToCommand;
     }
 
 	 */
+	}
 	
 }
