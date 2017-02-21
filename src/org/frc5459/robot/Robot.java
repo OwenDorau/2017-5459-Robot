@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot {
 	private VideoSource back;
 	private int shifts;
 	int ticks = 0;
+	private boolean winning = true;
 
 
 
