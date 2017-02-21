@@ -13,6 +13,7 @@ implements Consumer<Double> {
 
 	Drive5459 drive;
 	DoubleSupplier targetTurn;
+	double inputTargetTurn;
 	double trueTargetTurn;
 	double trueTurnThisLeft;
 	double trueTurnThisRight;
@@ -35,7 +36,14 @@ implements Consumer<Double> {
 		trueTargetTurn = targetTurn.getAsDouble();
 		
 		
+		
 	}
+	
+	public void setInputTargetTurn(){
+		//return inputTargetTurn.setValue();
+		
+	}
+	
 	public boolean execute(){
 		drive.setSpeedRight(trueTurnThisRight);
 		drive.setSpeedLeft(trueTurnThisLeft); //inverted above

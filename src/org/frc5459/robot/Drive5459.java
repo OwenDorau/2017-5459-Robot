@@ -7,7 +7,7 @@ import org.strongback.components.TalonSRX.StatusFrameRate;
 import org.strongback.control.TalonController;
 import org.strongback.control.TalonController.ControlMode;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
+import com.ctre.CANTalon;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.strongback.components.DistanceSensor;
@@ -30,22 +30,22 @@ public class Drive5459 {
 	
 	private long elapsedTime;
 	private long currentTime;
-	private double startCountRight;
-	private double endCountRight;
-	private double startCountLeft;
-	private double endCountLeft;
-	private double deltaRight;
-	private double deltaLeft;
-	private double deltaCount;
-	private double displacement;
+	private long startCountRight;
+	private long endCountRight;
+	private long startCountLeft;
+	private long endCountLeft;
+	private long deltaRight;
+	private long deltaLeft;
+	private long deltaCount;
+	private long displacement;
 	private double rightGoal = 0;
 	private double leftGoal = 0;
 	double inchPerSec;
 
 	private currentGear gear;
 	private boolean driverEnabled = true;
-	private TalonController topRight;
-	private TalonController topLeft;
+	private CANTalon topRight;
+	private CANTalon topLeft;
 	public boolean doneShifting;
 	
 	public static enum currentGear{
@@ -62,7 +62,7 @@ public class Drive5459 {
 		this.rightController = right;
 		this.leftController = left;
 		this.gear = currentGear.LOWGEAR;
-		this.topRight = topRight;
+		this.topRight = 
 		this.topLeft = topLeft;
 		
 	}
@@ -94,19 +94,27 @@ public class Drive5459 {
 	}
 	
 	public double getVelocity(){
-		startCountRight = rightController.getEncoderInput().getRate();
-		startCountLeft = leftController.getEncoderInput().getRate();
-		startCountLeft = (startCountLeft + startCountRight)/2;
-		startCountLeft = startCountRight  * Math.PI/180;
-		startCountLeft = startCountLeft *2;
-		
-		
-		return startCountLeft;
+		startCountRight = (long)rightController.getValue();
+		startCountLeft = (long)leftController.getValue();
+		currentTime = System.currentTimeMillis();
+		for (int v = 0; v < 2; v++){
+			Timer.delay(0.01);
+		}
+		endCountRight = (long)rightController.getValue();
+		endCountLeft = (long)leftController.getValue();
+		elapsedTime = System.currentTimeMillis() - currentTime;
+		deltaRight = endCountRight - startCountRight;
+		deltaLeft = endCountLeft - startCountLeft;
+		deltaCount = (deltaRight + deltaLeft) / 2;
+		elapsedTime = elapsedTime * 1000;
+		displacement = (long)(deltaCount/375.95);
+		inchPerSec = displacement/deltaCount;
+		return inchPerSec;
 	}
 
 	public void setSpeedRight(double power){
 		rightController.setControlMode(ControlMode.PERCENT_VBUS);
-		rightController.setSpeed(-power);
+		rightController.setSpeed(power);
 		updateTop();
 		
 	}
@@ -135,6 +143,9 @@ public class Drive5459 {
 		this.targetAngle = targetAngle;
 		this.leftGoal = leftController.getValue() +  targetAngle;
 		leftController.withTarget(leftGoal);
+		
+		
+		
 		
 	}
 	
