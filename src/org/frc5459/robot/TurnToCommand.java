@@ -32,10 +32,10 @@ implements Consumer<Double> {
 		this.targetTurn = targetTurn;
 		this.drive = drive;
 		
-		DoubleSupplier a = () -> {return (turn) ;} ;
+		DoubleSupplier a = () -> {return (turn + drive.imuY()) ;} ;
 		DoubleConsumer  b = (x) -> First = x  ;
 		
-		this.toPIDCommand = new toPIDCommand(a,b);
+		this.toPIDCommand = new TurnToPIDCommand(a,b);
 		this.turnThis = turnThis; 
 		currentRotation = drive.imuY();
 		trueTurnThisLeft = trueTurnThis * -1;
