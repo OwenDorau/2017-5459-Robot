@@ -49,10 +49,14 @@ TurnToCommand turnToCommand;
 	turnToPid.withTolerance(1); //needs testing
 	recorder.register("turnToPid", turnToPid.errorChannels());
 	turnToPid.useProfile(2);
-
+	
 
 	}
+	public boolean isWithinTolerance(){
 	
+		return turnToPid.isWithinTolerance();
+		
+	}
 }
 	
 
@@ -90,4 +94,5 @@ TurnToCommand turnToCommand;
     }
 
 	 */
+
 	
