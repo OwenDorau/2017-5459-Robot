@@ -2,12 +2,15 @@ package org.frc5459.robot;
 
 import org.strongback.command.Command;
 import org.strongback.components.Solenoid;
+import org.strongback.control.SoftwarePIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DisplayData extends Command{
 	private Drive5459 drive5459;
 	private Solenoid bucket;
+	private SoftwarePIDController softwarePIDController;
+	
 //	private double[] rightControllerValues = new double[6];
 //	private double[] leftControllerValues = new double[6];
 	
@@ -46,6 +49,16 @@ public class DisplayData extends Command{
 		SmartDashboard.putString("Left Controller Heading", drive5459.leftControllerValues[x++]);
 		SmartDashboard.putNumber("Velocity", drive5459.inchPerSec);
 		//Bucket
+		
+		//TurnToPID
+		softwarePIDController.useProfile(2);
+		SmartDashboard.putDouble("TurnToPID Target", softwarePIDController.getTarget());
+		SmartDashboard.putDouble("TurnToPID Tolerance", softwarePIDController.getTolerance());
+		SmartDashboard.putDouble("TurnToPID Value", softwarePIDController.getValue());
+		//SmartDashboard.putString(key, value);("TurnToPID Error", softwarePIDController.getSmartDashboardType());
+		//SmartDashboard.putString("TurnToPID Tolerance", softwarePIDController.getGainsForCurrentProfile());
+		SmartDashboard.putDouble("TurnToPID Tolerance", softwarePIDController.getTolerance() - softwarePIDController.getTarget());
+		
 		
 		
 		return true;
