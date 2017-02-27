@@ -21,26 +21,41 @@ DataRecorder recorder;
 TurnToCommand turnToCommand;
 
 	public TurnToPIDCommand(){
+
+			
+	
+	
+
 	this.turnToPid = new SoftwarePIDController(SourceType.DISTANCE,
 			turnToCommand.targetTurn, 
 			turnToCommand.turnThis);    
+
+//	/** 
+//	 *  controller = new SoftwarePIDController(model::sourceType, model::getActualValue, model::setValue)
+//                                                                                                     .withGains(0.9,
+//                                                                                                                    0.0,
+//                                                                                                                    0.0)
+//                                                                                                         .withInputRange(-1.0,
+//                                                                                                                         1.0)
+//                                                                                                         .withOutputRange(-1.0,
+//                                                                                                                          1.0)
+//                                                                                                         .withTolerance(0.02)
+//                                                                                                         .withTarget(0.5);
+//	 */
+
 	turnToPid.withGains(5, 5, 0); //needs testing
 	turnToPid.withInputRange(-1, 1); //needs testing
 	turnToPid.withOutputRange(-1, 1); //needs testing
 	turnToPid.withTolerance(1); //needs testing
-	recorder.register("turnToPid", turnToPid.basicChannels());
+	recorder.register("turnToPid", turnToPid.errorChannels());
 	turnToPid.useProfile(2);
 
 
-	
-
-
-
-	
-
 	}
+	
 }
 	
+
 
 	/**
 	 * private static class SystemModel {
@@ -75,4 +90,5 @@ TurnToCommand turnToCommand;
     }
 
 	 */
+	}
 	
