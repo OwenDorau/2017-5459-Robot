@@ -128,7 +128,7 @@ public class Drive5459 {
 		rightController.changeControlMode(TalonControlMode.Position);
 		this.targetAngle = targetAngle;
 		this.rightGoal = rightController.getPosition() + targetAngle;
-		rightController.set(targetAngle);
+		rightController.set(rightGoal);
 		
 	}
 	//TODO: add the current value to the target
@@ -138,8 +138,7 @@ public class Drive5459 {
 		this.targetAngle = targetAngle;
 
 		this.leftGoal = leftController.getPosition() + targetAngle;
-
-		leftController.set(targetAngle);
+		leftController.set(leftGoal);
 
 	}
 	

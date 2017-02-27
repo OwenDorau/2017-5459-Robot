@@ -21,6 +21,7 @@ implements Consumer<Double> {
 	Drive5459 rightController;
 	DoubleConsumer turnThis; 
 	double currentRotation;
+	TurnToPIDCommand toPIDCommand;
 	public TurnToCommand(){
 		this.targetTurn = null;
 		this.drive = null;
@@ -29,6 +30,7 @@ implements Consumer<Double> {
 	public TurnToCommand(DoubleSupplier targetTurn, DoubleConsumer turnThis){
 		this.targetTurn = targetTurn;
 		this.drive = drive;
+		this.toPIDCommand = toPIDCommand;
 		this.turnThis = turnThis; 
 		currentRotation = drive.imuY();
 		trueTurnThisLeft = trueTurnThis * -1;
@@ -44,7 +46,7 @@ implements Consumer<Double> {
 		
 		
 		
-		if(currentRotation !=  trueTargetTurn){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if(toPIDCommand.){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			return false;
 		}else{
 			return true;
@@ -59,6 +61,11 @@ implements Consumer<Double> {
 		
 
 
+	}
+	public boolean isWithinTolerance(){
+		
+		return toPIDCommand.isWithinTolerance();
+		
 	}
 	
 	
