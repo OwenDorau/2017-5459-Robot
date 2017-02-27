@@ -33,12 +33,10 @@ implements Consumer<Double> {
 		currentRotation = drive.imuY();
 		trueTurnThisLeft = trueTurnThis * -1;
 		trueTurnThisRight = trueTurnThis;
-		trueTargetTurn = targetTurn.getAsDouble();
-		
-		
-	   
+		trueTargetTurn = targetTurn.getAsDouble();   
 	}
 	
+
 	
 	public boolean execute(){
 		drive.setSpeedRight(trueTurnThisRight);
@@ -59,6 +57,7 @@ implements Consumer<Double> {
 	@Override 
 	public void accept(Double trueturnThis) {
 		
+
 
 	}
 	

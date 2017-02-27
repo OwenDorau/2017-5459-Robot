@@ -6,6 +6,7 @@ import org.strongback.components.DistanceSensor;
 import org.strongback.components.Solenoid;
 
 import com.ctre.CANTalon;
+
 import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -27,14 +28,14 @@ public class Drive5459 {
 	
 	private long elapsedTime;
 	private long currentTime;
-	private double startCountRight;
-	private double endCountRight;
-	private double startCountLeft;
-	private double endCountLeft;
-	private double deltaRight;
-	private double deltaLeft;
-	private double deltaCount;
-	private double displacement;
+	private long startCountRight;
+	private long endCountRight;
+	private long startCountLeft;
+	private long endCountLeft;
+	private long deltaRight;
+	private long deltaLeft;
+	private long deltaCount;
+	private long displacement;
 	private double rightGoal = 0;
 	private double leftGoal = 0;
 	double inchPerSec;
@@ -59,7 +60,7 @@ public class Drive5459 {
 		this.rightController = right;
 		this.leftController = left;
 		this.gear = currentGear.LOWGEAR;
-		this.topRight = topRight;
+		this.topRight = 
 		this.topLeft = topLeft;
 		this.drive = new  RobotDrive(leftController, rightController);
 		
@@ -92,10 +93,11 @@ public class Drive5459 {
 	}
 	
 	public double getVelocity(){
+
 		startCountRight = rightController.getEncVelocity();
 		startCountLeft = leftController.getEncVelocity();
 		startCountLeft = (startCountLeft + startCountRight)/2;
-		startCountLeft = startCountRight  * Math.PI/180;
+		startCountLeft = (long) (startCountRight  * Math.PI/180);
 		startCountLeft = startCountLeft *2;
 		
 		
@@ -107,6 +109,7 @@ public class Drive5459 {
 		rightController.changeControlMode(TalonControlMode.PercentVbus);
 		rightController.set(-power);
 		
+
 		
 	}
 	
@@ -133,8 +136,10 @@ public class Drive5459 {
 		//leftController.setProfile(0);
 		leftController.changeControlMode(TalonControlMode.Position);
 		this.targetAngle = targetAngle;
+
 		this.leftGoal = leftController.getEncPosition() + targetAngle;
 		leftController.set(this.leftGoal);
+
 	}
 	
 	public double rightEncoderValue(){
