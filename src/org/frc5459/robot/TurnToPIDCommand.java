@@ -20,15 +20,15 @@ DataRecorder recorder;
 
 TurnToCommand turnToCommand;
 
-	public TurnToPIDCommand(){
+	public TurnToPIDCommand(DoubleSupplier targetTurn, DoubleConsumer turnThis){
 
 			
 	
 	
 
 	this.turnToPid = new SoftwarePIDController(SourceType.DISTANCE,
-			turnToCommand.targetTurn, 
-			turnToCommand.turnThis);    
+			targetTurn, 
+			turnThis);    
 
 //	/** 
 //	 *  controller = new SoftwarePIDController(model::sourceType, model::getActualValue, model::setValue)
