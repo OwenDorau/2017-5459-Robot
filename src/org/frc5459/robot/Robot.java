@@ -8,19 +8,17 @@ import org.strongback.SwitchReactor;
 import org.strongback.components.DistanceSensor;
 import org.strongback.components.Solenoid;
 import org.strongback.components.Solenoid.Direction;
-
 import org.strongback.components.ui.Gamepad;
 import org.strongback.control.SoftwarePIDController;
-
 import org.strongback.hardware.Hardware;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -51,6 +49,8 @@ public class Robot extends IterativeRobot {
 	private VideoSource front;
 	private VideoSource back;
 	private int shifts;
+	int ticks = 0;
+	private boolean winning = true;
 
 
 
@@ -75,8 +75,15 @@ public class Robot extends IterativeRobot {
     	climber.reverseOutput(true);    	
     	//Setting Followers
     	//topRight is Right Side Master (TalonSRX #1)0.062, 0.00062, 0.62)
-    	middleRight.setPID(0.062, 0.00062, 0.62);//TODO: make multiple profiles
-    	middleRight.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+    	middleRight.reset();
+    	middleRight.setPID(0.062, 0.00062, 0.0);//TODO: make multiple profiles
+    	middleRight.setPID(0, 0, 0);
+    	middleRight.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+    	middleRight.setEncPosition((middleRight.getPulseWidthPosition() & 0xFFF));
+    	middleRight.setAllowableClosedLoopErr(10);
+    	middleRight.reverseSensor(true);
+    	middleRight.configNominalOutputVoltage(+0f, -0f);
+    	middleRight.configPeakOutputVoltage(+12f, -12f);
     	topRight.changeControlMode(TalonControlMode.Follower);
     	topRight.set(middleRight.getDeviceID());
     	topRight.reverseOutput(true);
@@ -84,9 +91,14 @@ public class Robot extends IterativeRobot {
     	bottomRight.set(middleRight.getDeviceID());
     	//climber is the climber Motor (TalonSRX #4)
     	//TopLeft is Right Side Master (TalonSRX #5)
-    	middleLeft.setPID(0.062, 0.00062, 0.62);
-    	middleLeft.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-    	
+    	middleLeft.reset();
+    	middleLeft.setPID(0.062, 0.00062, 0.0);
+    	middleLeft.setPID(0, 0, 0);
+    	middleLeft.setEncPosition((middleLeft.getPulseWidthPosition() & 0xFFF));
+    	middleLeft.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+    	middleLeft.configNominalOutputVoltage(+0f, -0f);
+    	middleLeft.configPeakOutputVoltage(+12f, -12f);
+    	middleLeft.setAllowableClosedLoopErr(10);
     	topLeft.changeControlMode(TalonControlMode.Follower); //TalonSRX #6
     	topLeft.set(middleLeft.getDeviceID());
     	topLeft.reverseOutput(true);
@@ -103,15 +115,23 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void autonomousInit() {
-    	Strongback.start();    	
+    	Strongback.start(); 
+    	
+		if (ticks  == 0) {
+			drive.setEncoderTargetAngleLeft(10);
+			drive.setEncoderTargetAngleRight(10);
+			SmartDashboard.putInt("encoder positioin", middleLeft.getEncPosition());
+			SmartDashboard.putDouble("dsohfousdhofh", middleLeft.getError());
+			SmartDashboard.putDouble("djfhhhhhhh", middleLeft.getPosition());
+    	}
+    	ticks++;
     }
     
     @Override
     public void autonomousPeriodic() {
     	
     	//if (driver.getA().isTriggered()) {
-			drive.setEncoderTargetAngleLeft(10000);
-			drive.setEncoderTargetAngleRight(10000);
+			
 		//}
     }
     
@@ -131,9 +151,9 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putDouble("This is the velocity", drive.getVelocity());
     	SmartDashboard.putInt("number of shifts", shifts);
     	if (operator.getRightBumper().isTriggered()) {
-    		Strongback.submit(new BucketExtendCommand(bucket));
+//    		Strongback.submit(new BucketExtendCommand(bucket));
 		}else if( operator.getLeftBumper().isTriggered()){
-			Strongback.submit(new BucketRetractCommand(bucket));
+//			Strongback.submit(new BucketRetractCommand(bucket));
 
 		}
     	if (driver.getLeftBumper().isTriggered()) {
@@ -143,7 +163,13 @@ public class Robot extends IterativeRobot {
 			Strongback.submit(new ShiftDownCommand(drive, driver));
 		}
     	if (drive.isDriverEnabled()) {
-    		Strongback.submit(new TeleopDriveCommand(drive, driver));
+    		if (driver.getLeftTrigger().read() > 0.7) {
+    			Strongback.submit(new TeleopDriveCommand(drive, driver,true));
+			}else {
+				Strongback.submit(new TeleopDriveCommand(drive, driver,false));
+			}
+    		
+    		
     	}
 		if (operator.getY().isTriggered()) {
 			Strongback.submit(new GoToEncoderValueCommand(30));
@@ -169,9 +195,7 @@ public class Robot extends IterativeRobot {
 //    	rotationalAngle = dataBase.getNumber("rotationAngle", 0.0);
 //    	double angle = dataBase.getNumber("angle", 0);
 //    	SmartDashboard.putDouble("this is the distance", distance);
-//    	SmartDashboard.putDouble("Horizontal distance",horizontalDistance);
-//    	SmartDashboard.putDouble("First angle", rotationalAngle);
-//    	SmartDashboard.putDouble("Second one (based on dis)", angle);
+//    	SmartDashboard.putDouble("Angle", angle);
 //    	//TODO: test the drive train today and try to get raspi done as well
     	Timer.delay(0.05);
     	

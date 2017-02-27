@@ -23,18 +23,24 @@ public class TeleopDriveCommand extends Command{
 	private boolean shiftingUp;
 	private boolean isAtCorrectSpeed;
 	double inchPerSec;
+	private boolean arcade;
 	
-	public TeleopDriveCommand(Drive5459 drive, Gamepad driver) {
+	public TeleopDriveCommand(Drive5459 drive, Gamepad driver, boolean arcade) {
 		this.drive = drive;
 		this.driver = driver;
 		this.drive.setDriverEnabled(true);
+		this.arcade = arcade;
 	}
 	
 	
 	@Override
 	public boolean execute(){
-		drive.setSpeedLeft(driver.getLeftY().read());
-		drive.setSpeedRight(driver.getRightY().read());
+		if (arcade) {
+			drive.arcadeDrive(driver.getRightY().read(), driver.getLeftY().read());
+		}else {
+			drive.setSpeedLeft(driver.getLeftY().read());
+			drive.setSpeedRight(driver.getRightY().read());
+		}
 		return true;
 	}
 	
