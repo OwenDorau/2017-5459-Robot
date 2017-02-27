@@ -18,6 +18,7 @@ implements Consumer<Double> {
 	double trueTurnThisLeft;
 	double trueTurnThisRight;
 	double trueTurnThis;
+	double First;
 	Drive5459 rightController;
 	DoubleConsumer turnThis; 
 	double currentRotation;
@@ -27,10 +28,14 @@ implements Consumer<Double> {
 		this.drive = null;
 	}
 	
-	public TurnToCommand(DoubleSupplier targetTurn, DoubleConsumer turnThis){
+	public TurnToCommand(double turn){
 		this.targetTurn = targetTurn;
 		this.drive = drive;
-		this.toPIDCommand = toPIDCommand;
+		
+		DoubleSupplier a = () -> {return (turn) ;} ;
+		DoubleConsumer  b = (x) -> First = x  ;
+		
+		this.toPIDCommand = new toPIDCommand(a,b);
 		this.turnThis = turnThis; 
 		currentRotation = drive.imuY();
 		trueTurnThisLeft = trueTurnThis * -1;
