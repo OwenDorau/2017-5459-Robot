@@ -1,6 +1,8 @@
 
 package org.frc5459.robot;
 
+import java.util.function.DoubleSupplier;
+
 import org.frc5459.robot.Drive5459.currentGear;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
@@ -76,7 +78,7 @@ public class Robot extends IterativeRobot {
     	//topRight is Right Side Master (TalonSRX #1)0.062, 0.00062, 0.62)
     	middleRight.reset();
     	middleRight.setPID(0.062, 0.00062, 0.0);//TODO: make multiple profiles
-    	middleRight.setPID(0, 0, 0);
+    	//middleRight.setPID(0, 0, 0);
     	middleRight.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
     	middleRight.setEncPosition((middleRight.getPulseWidthPosition() & 0xFFF));
     	middleRight.setAllowableClosedLoopErr(10);
@@ -92,7 +94,7 @@ public class Robot extends IterativeRobot {
     	//TopLeft is Right Side Master (TalonSRX #5)
     	middleLeft.reset();
     	middleLeft.setPID(0.062, 0.00062, 0.0);
-    	middleLeft.setPID(0, 0, 0);
+    	//middleLeft.setPID(0, 0, 0);
     	middleLeft.setEncPosition((middleLeft.getPulseWidthPosition() & 0xFFF));
     	middleLeft.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
     	middleLeft.configNominalOutputVoltage(+0f, -0f);
@@ -106,7 +108,7 @@ public class Robot extends IterativeRobot {
     	//Sensors
     	imu = new ADIS16448IMU();
     	//drive
-    	drive = new Drive5459(middleRight, middleLeft, ultraX, ultraY, imu, shifter,topRight,topLeft);
+    	drive = new Drive5459(middleRight, middleLeft, ultraX, ultraY, imu, shifter,topRight, topLeft);
     	
     	
     	// front = VideoSource.
@@ -115,20 +117,22 @@ public class Robot extends IterativeRobot {
     @Override
     public void autonomousInit() {
     	Strongback.start(); 
+    	//Strongback.submit(new GoToEncoderValueCommand(12));
     	
-		if (ticks  == 0) {
-			drive.setEncoderTargetAngleLeft(10);
-			drive.setEncoderTargetAngleRight(10);
+//		
+//			drive.setEncoderTargetAngleLeft(10000);
+//			drive.setEncoderTargetAngleRight(10000);
 			SmartDashboard.putInt("encoder positioin", middleLeft.getEncPosition());
 			SmartDashboard.putDouble("dsohfousdhofh", middleLeft.getError());
 			SmartDashboard.putDouble("djfhhhhhhh", middleLeft.getPosition());
-    	}
-    	ticks++;
+    	
+    	
     }
     
     @Override
     public void autonomousPeriodic() {
-    	
+    	//drive.setEncoderTargetAngleLeft(10000);
+		//drive.setEncoderTargetAngleRight(10000);
     	//if (driver.getA().isTriggered()) {
 			
 		//}
@@ -143,23 +147,39 @@ public class Robot extends IterativeRobot {
     	//("turning PID controller gains", turnToPID.getGainsFor(2));
     	//SmartDashboard.putData("turning PID controller I", turnToPID.getTarget());
     	//turnToPID.startLiveWindowMode();
+    	Strongback.submit(new ShiftUpCommand(drive, driver));
     }
 
     @Override
-    public void teleopPeriodic() {    	
+    public void teleopPeriodic() {   
+    	//middleLeft.changeControlMode(TalonControlMode.PercentVbus);
+    	//middleRight.changeControlMode(TalonControlMode.PercentVbus);
+    	//middleLeft.set(1.0);
+    	//middleRight.set(1.0);
     	SmartDashboard.putDouble("This is the velocity", drive.getVelocity());
     	SmartDashboard.putInt("number of shifts", shifts);
+    	SmartDashboard.putDouble("power", driver.getRightY().read());
+    	SmartDashboard.putDouble("rot", driver.getLeftY().read());
     	if (operator.getRightBumper().isTriggered()) {
-//    		Strongback.submit(new BucketExtendCommand(bucket));
+    		Strongback.submit(new BucketExtendCommand(bucket));
 		}else if( operator.getLeftBumper().isTriggered()){
-//			Strongback.submit(new BucketRetractCommand(bucket));
+			Strongback.submit(new BucketRetractCommand(bucket));
 
 		}
-    	if (driver.getLeftBumper().isTriggered()) {
-			Strongback.submit(new ShiftUpCommand(drive, driver));
+//    	if (driver.getLeftBumper().isTriggered()) {
+//			Strongback.submit(new ShiftUpCommand(drive, driver));
+//		}
+//    	if (driver.getRightBumper().isTriggered()) {
+//			Strongback.submit(new ShiftDownCommand(drive, driver));
+//		}
+    	
+    	if (operator.getA().isTriggered()) {
+			drive.setDriverEnabled(false);
+			drive.setEncoderTargetAngleLeft(10000);
+			drive.setEncoderTargetAngleRight(10000);
 		}
-    	if (driver.getRightBumper().isTriggered()) {
-			Strongback.submit(new ShiftDownCommand(drive, driver));
+    	if (middleLeft.getError() == 0 || middleRight.getError() == 0) {
+			drive.setDriverEnabled(true);
 		}
     	if (drive.isDriverEnabled()) {
     		if (driver.getLeftTrigger().read() > 0.7) {
@@ -168,23 +188,23 @@ public class Robot extends IterativeRobot {
 				Strongback.submit(new TeleopDriveCommand(drive, driver,false));
 			}
     		
-    		
+//    		
     	}
-		if (operator.getY().isTriggered()) {
-			Strongback.submit(new GoToEncoderValueCommand(30));
-//			drive.setEncoderTargetAngleLeft(1000000000);
-//			drive.setEncoderTargetAngleRight(1000000000);
-			
-		}
-		if (drive.getVelocity() > 65&& drive.getCurrentGear().equals(currentGear.LOWGEAR)) {
-			shifts++;
-			Strongback.submit(new ShiftDownCommand(drive, driver));
-		}else if (drive.getVelocity() < 55 && drive.getCurrentGear().equals(currentGear.HIGHGEAR)) {
-			shifts++;
-			Strongback.submit(new ShiftUpCommand(drive, driver));
-		}
+//		if (operator.getY().isTriggered()) {
+//			Strongback.submit(new GoToEncoderValueCommand(30));
+////			drive.setEncoderTargetAngleLeft(1000000000);
+////			drive.setEncoderTargetAngleRight(1000000000);
+//			
+//		}
+//		if (drive.getVelocity() > 65 && drive.getCurrentGear().equals(currentGear.LOWGEAR)) {
+//			shifts++;
+//			Strongback.submit(new ShiftDownCommand(drive, driver));
+//		}else if (drive.getVelocity() < 60 && drive.getCurrentGear().equals(currentGear.HIGHGEAR)) {
+//			shifts++;
+//			Strongback.submit(new ShiftUpCommand(drive, driver));
+//		}
 
-    	if (operator.getA().isTriggered()) { 
+    	if (operator.getRightTrigger().read() > 0.7) { 
 			Strongback.submit(new AscendClimbCommand(climber));
 		}else {
 			Strongback.submit(new StopClimbCommand(climber));

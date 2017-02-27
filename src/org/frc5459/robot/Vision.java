@@ -58,7 +58,7 @@ public class Vision extends Command{
 		drive.setEncoderTargetAngleLeft(disToDrive);
 		drive.setEncoderTargetAngleRight(disToDrive);
 		Timer.delay(0.05);
-		if (y <= 11 && (x < 0.5 || x > -0.5) && theta < 5) {
+		if (y <= 11 && (x < 0.5 || x > -0.5) && theta < 2) {
 			return true;
 		} else {
 			return false;
