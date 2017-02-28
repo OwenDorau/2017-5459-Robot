@@ -167,6 +167,7 @@ public class Robot extends IterativeRobot {
 			Strongback.submit(new BucketRetractCommand(bucket));
 
 		}
+    	Strongback.submit(new DisplayData(bucket, drive));
 //    	if (driver.getLeftBumper().isTriggered()) {
 //			Strongback.submit(new ShiftUpCommand(drive, driver));
 //		}

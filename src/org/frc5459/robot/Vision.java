@@ -3,6 +3,9 @@ package org.frc5459.robot;
 import org.strongback.Strongback;
 import org.strongback.command.Command;
 import java.lang.Math;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
@@ -50,7 +53,8 @@ public class Vision extends Command{
 		e = Math.sqrt((Math.pow(z, 2) + Math.pow(d, 2) - 2*z*d*Math.cos(w)));
 		disToDrive = (e - d)*325.9493234522016;
 		angleToTurn = Math.asin((z*Math.sin(w))/e);
-		//turn =  new TurnToCommand(angleToTurn);
+		
+		turn =  new TurnToCommand(angleToTurn,drive);
 		Strongback.submit(turn);
 		while(!turn.execute()) {
 			Timer.delay(0.01);

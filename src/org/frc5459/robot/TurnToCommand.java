@@ -6,52 +6,36 @@ import java.util.function.DoubleSupplier;
 
 import org.strongback.command.Command;
 
-import oracle.jrockit.jfr.ProducerDescriptor;
 
-public class TurnToCommand extends Command 
-implements Consumer<Double> {
+
+public class TurnToCommand extends Command {
 
 	Drive5459 drive;
-	DoubleSupplier targetTurn;
-	double inputTargetTurn;
-	double trueTargetTurn;
-	double trueTurnThisLeft;
-	double trueTurnThisRight;
-	double trueTurnThis;
-	double First;
+	
 	Drive5459 rightController;
 	DoubleConsumer turnThis; 
 	double currentRotation;
 	TurnToPIDCommand toPIDCommand;
+	DoubleConsumer  b;
+	DoubleSupplier a;
 	public TurnToCommand(){
-		this.targetTurn = null;
 		this.drive = null;
 	}
 	
-	public TurnToCommand(double turn){
-		this.targetTurn = targetTurn;
+	public TurnToCommand(double turn, Drive5459 drive){
 		this.drive = drive;
-		
-		DoubleSupplier a = () -> {return (turn + drive.imuY()) ;} ;
-		DoubleConsumer  b = (x) -> First = x  ;
-		
+		this.a = () -> {return (turn + drive.imuY()) ;} ;
+		this.b = (x) -> {drive.setSpeedRight(x); drive.setSpeedLeft(-1*x); } ;
 		this.toPIDCommand = new TurnToPIDCommand(a,b);
-		this.turnThis = turnThis; 
-		currentRotation = drive.imuY();
-		trueTurnThisLeft = trueTurnThis * -1;
-		trueTurnThisRight = trueTurnThis;
-		trueTargetTurn = targetTurn.getAsDouble();   
+				  
 	}
 	
 
 	
 	public boolean execute(){
-		drive.setSpeedRight(trueTurnThisRight);
-		drive.setSpeedLeft(trueTurnThisLeft); //inverted above
+			
 		
-		
-		
-		if(toPIDCommand.){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if(toPIDCommand.isWithinTolerance()){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			return false;
 		}else{
 			return true;
@@ -61,12 +45,8 @@ implements Consumer<Double> {
 		
 	}
 
-	@Override 
-	public void accept(Double trueturnThis) {
-		
-
-
-	}
+	
+	
 	public boolean isWithinTolerance(){
 		
 		return toPIDCommand.isWithinTolerance();
