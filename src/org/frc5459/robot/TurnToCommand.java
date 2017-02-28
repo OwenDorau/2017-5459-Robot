@@ -12,7 +12,6 @@ public class TurnToCommand extends Command
 implements Consumer<Double> {
 
 	Drive5459 drive;
-	DoubleSupplier targetTurn;
 	double inputTargetTurn;
 	double trueTargetTurn;
 	double trueTurnThisLeft;
@@ -24,23 +23,19 @@ implements Consumer<Double> {
 	double currentRotation;
 	TurnToPIDCommand toPIDCommand;
 	public TurnToCommand(){
-		this.targetTurn = null;
 		this.drive = null;
 	}
 	
 	public TurnToCommand(double turn){
-		this.targetTurn = targetTurn;
 		this.drive = drive;
-		
 		DoubleSupplier a = () -> {return (turn + drive.imuY()) ;} ;
 		DoubleConsumer  b = (x) -> First = x  ;
-		
 		this.toPIDCommand = new TurnToPIDCommand(a,b);
 		this.turnThis = turnThis; 
 		currentRotation = drive.imuY();
 		trueTurnThisLeft = trueTurnThis * -1;
 		trueTurnThisRight = trueTurnThis;
-		trueTargetTurn = targetTurn.getAsDouble();   
+		trueTargetTurn = a.getAsDouble();   
 	}
 	
 
@@ -51,7 +46,7 @@ implements Consumer<Double> {
 		
 		
 		
-		if(toPIDCommand.){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if(toPIDCommand.isWithinTolerance()){ //needs converted targetTurn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			return false;
 		}else{
 			return true;
