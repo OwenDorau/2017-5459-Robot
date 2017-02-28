@@ -167,6 +167,11 @@ public class Robot extends IterativeRobot {
 			Strongback.submit(new BucketRetractCommand(bucket));
 
 		}
+
+    	if(operator.getX().isTriggered()){
+    		Strongback.submit(new TurnToCommand(90));
+    	}
+
     	Strongback.submit(new DisplayData(bucket, drive));
 //    	if (driver.getLeftBumper().isTriggered()) {
 //			Strongback.submit(new ShiftUpCommand(drive, driver));
@@ -179,6 +184,7 @@ public class Robot extends IterativeRobot {
 			drive.setDriverEnabled(false);
 			drive.setEncoderTargetAngleLeft(10000);
 			drive.setEncoderTargetAngleRight(10000);
+
 		}
     	if (middleLeft.getError() == 0 || middleRight.getError() == 0) {
 			drive.setDriverEnabled(true);

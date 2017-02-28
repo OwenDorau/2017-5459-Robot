@@ -11,7 +11,7 @@ import org.strongback.command.Command;
 public class TurnToCommand extends Command {
 
 	Drive5459 drive;
-	
+
 	Drive5459 rightController;
 	DoubleConsumer turnThis; 
 	double currentRotation;
@@ -22,12 +22,14 @@ public class TurnToCommand extends Command {
 		this.drive = null;
 	}
 	
+
 	public TurnToCommand(double turn, Drive5459 drive){
 		this.drive = drive;
 		this.a = () -> {return (turn + drive.imuY()) ;} ;
 		this.b = (x) -> {drive.setSpeedRight(x); drive.setSpeedLeft(-1*x); } ;
 		this.toPIDCommand = new TurnToPIDCommand(a,b);
 				  
+
 	}
 	
 
