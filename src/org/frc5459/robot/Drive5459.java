@@ -39,7 +39,7 @@ public class Drive5459 {
 	private double rightGoal = 0;
 	private double leftGoal = 0;
 	double inchPerSec;
-	private RobotDrive drive
+	private RobotDrive drive;
 	private currentGear gear;
 	private boolean driverEnabled = true;
 	private CANTalon topRight;
