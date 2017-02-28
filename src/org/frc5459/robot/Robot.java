@@ -156,6 +156,9 @@ public class Robot extends IterativeRobot {
 //			Strongback.submit(new BucketRetractCommand(bucket));
 
 		}
+    	if(operator.getX().isTriggered()){
+    		Strongback.submit(new TurnToCommand(90));
+    	}
     	if (driver.getLeftBumper().isTriggered()) {
 			Strongback.submit(new ShiftUpCommand(drive, driver));
 		}
