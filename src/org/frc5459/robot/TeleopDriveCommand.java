@@ -36,10 +36,9 @@ public class TeleopDriveCommand extends Command{
 	@Override
 	public boolean execute(){
 		if (arcade) {
-			drive.arcadeDrive(driver.getRightY().read(), driver.getLeftY().read());
+			drive.arcadeDrive(driver.getRightY().read()*0.5, driver.getLeftY().read()*0.5);
 		}else {
-			drive.setSpeedLeft(driver.getLeftY().read());
-			drive.setSpeedRight(driver.getRightY().read());
+			drive.arcadeDrive(driver.getRightY().read(), driver.getLeftY().read());
 		}
 		return true;
 	}
