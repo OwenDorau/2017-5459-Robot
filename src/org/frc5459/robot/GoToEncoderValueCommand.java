@@ -20,14 +20,17 @@ public class GoToEncoderValueCommand extends Command {
 		this.drive = drive;
 	}
 	public boolean execute(){
-//    	leftDistance = drive.leftEncoderValue();
-//    	rightDistance = drive.rightEncoderValue();
 		trueTargetDistance = targetDistance * 325.9493234522016; //end up in steps
 		drive.setEncoderTargetAngleLeft(trueTargetDistance);
 		drive.setEncoderTargetAngleRight(trueTargetDistance);
 		
+		if (drive.encoderIsInTolerence()) {
+			return true;
+		}else {
+			return false;
+		}
 		
-		return true;
+		
 		
 	}
 	

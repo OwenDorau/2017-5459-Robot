@@ -4,6 +4,7 @@ package org.frc5459.robot;
 
 import org.strongback.components.DistanceSensor;
 import org.strongback.components.Solenoid;
+import org.strongback.control.TalonController;
 
 import com.ctre.CANTalon;
 
@@ -106,7 +107,10 @@ public class Drive5459 {
 
 	public void setSpeedRight(double power){
 		//rightController.setProfile(1);
-		rightController.changeControlMode(TalonControlMode.PercentVbus);
+		if (!rightController.getControlMode().equals(TalonControlMode.PercentVbus)) {
+			rightController.changeControlMode(TalonControlMode.PercentVbus);
+		}
+		
 		rightController.set(-power);
 		
 
@@ -115,7 +119,10 @@ public class Drive5459 {
 	
 	public void setSpeedLeft(double power){
 		//leftController.setProfile(1);
-		leftController.changeControlMode(TalonControlMode.PercentVbus);
+		if (!leftController.getControlMode().equals(TalonControlMode.PercentVbus)) {
+			leftController.changeControlMode(TalonControlMode.PercentVbus);
+		}
+		
 		leftController.set(power); 
 		
 	}
@@ -221,5 +228,13 @@ public class Drive5459 {
 		drive.arcadeDrive(power, rotation);
 	}
 	
+	public boolean encoderIsInTolerence(){
+		if (rightController.getClosedLoopError() >= Math.abs(rightController.getError()) && 
+				leftController.getClosedLoopError() >= Math.abs(leftController.getError())) {
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 }

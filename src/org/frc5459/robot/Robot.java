@@ -77,12 +77,12 @@ public class Robot extends IterativeRobot {
     	climber.reverseOutput(true);    	
     	//Setting Followers
     	//topRight is Right Side Master (TalonSRX #1)0.062, 0.00062, 0.62)
-    	middleRight.reset();
-    	middleRight.setPID(0.062, 0.00062, 0.0);//TODO: make multiple profiles
-    	//middleRight.setPID(0, 0, 0);
+    	//middleRight.reset();
+    	//middleRight.setPID( 0.1, 0.0, 0.0);//TODO: make multiple profiles
+    	
     	middleRight.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
     	middleRight.setEncPosition((middleRight.getPulseWidthPosition() & 0xFFF));
-    	middleRight.setAllowableClosedLoopErr(10);
+    	//middleRight.setAllowableClosedLoopErr(10);
     	middleRight.reverseSensor(true);
     	middleRight.configNominalOutputVoltage(+0f, -0f);
     	middleRight.configPeakOutputVoltage(+12f, -12f);
@@ -94,13 +94,12 @@ public class Robot extends IterativeRobot {
     	//climber is the climber Motor (TalonSRX #4)
     	//TopLeft is Right Side Master (TalonSRX #5)
     	middleLeft.reset();
-    	middleLeft.setPID(0.062, 0.00062, 0.0);
-    	//middleLeft.setPID(0, 0, 0);
+    	//middleLeft.setPID(0.1, 0.00, 0.0);
     	middleLeft.setEncPosition((middleLeft.getPulseWidthPosition() & 0xFFF));
     	middleLeft.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
     	middleLeft.configNominalOutputVoltage(+0f, -0f);
     	middleLeft.configPeakOutputVoltage(+12f, -12f);
-    	middleLeft.setAllowableClosedLoopErr(10);
+    	//middleLeft.setAllowableClosedLoopErr(10);
     	topLeft.changeControlMode(TalonControlMode.Follower); //TalonSRX #6
     	topLeft.set(middleLeft.getDeviceID());
     	topLeft.reverseOutput(true);
@@ -124,8 +123,8 @@ public class Robot extends IterativeRobot {
 //			drive.setEncoderTargetAngleLeft(10000);
 //			drive.setEncoderTargetAngleRight(10000);
 			SmartDashboard.putInt("encoder positioin", middleLeft.getEncPosition());
-			SmartDashboard.putDouble("dsohfousdhofh", middleLeft.getError());
-			SmartDashboard.putDouble("djfhhhhhhh", middleLeft.getPosition());
+			SmartDashboard.putDouble("error", middleLeft.getError());
+			SmartDashboard.putDouble("position", middleLeft.getPosition());
     	
     	
     }
@@ -168,11 +167,12 @@ public class Robot extends IterativeRobot {
 
 		}
 
+
     	if(operator.getX().isTriggered()){
     		Strongback.submit(new TurnToCommand(90));
     	}
 
-    	Strongback.submit(new DisplayData(bucket, drive));
+    	
 //    	if (driver.getLeftBumper().isTriggered()) {
 //			Strongback.submit(new ShiftUpCommand(drive, driver));
 //		}
@@ -181,14 +181,15 @@ public class Robot extends IterativeRobot {
 //		}
     	
     	if (operator.getA().isTriggered()) {
-			drive.setDriverEnabled(false);
-			drive.setEncoderTargetAngleLeft(10000);
-			drive.setEncoderTargetAngleRight(10000);
+			
+			drive.setSpeedLeft(0.5);
+			drive.setSpeedRight(0.5);
 
 		}
     	if (middleLeft.getError() == 0 || middleRight.getError() == 0) {
 			drive.setDriverEnabled(true);
 		}
+    	drive.setDriverEnabled(false);
     	if (drive.isDriverEnabled()) {
     		if (driver.getLeftTrigger().read() > 0.7) {
     			Strongback.submit(new TeleopDriveCommand(drive, driver,true));
@@ -198,6 +199,15 @@ public class Robot extends IterativeRobot {
     		
 //    		
     	}
+    	
+    	if (driver.getB().isTriggered()) {
+			Strongback.submit(new GoToEncoderValueCommand(24));
+		}
+    	
+    	if (driver.getY().isTriggered()) {
+			drive.setEncoderTargetAngleRight(325.9493234522016*24);
+			drive.setEncoderTargetAngleRight(325.9493234522016*24);
+		}
 //		if (operator.getY().isTriggered()) {
 //			Strongback.submit(new GoToEncoderValueCommand(30));
 ////			drive.setEncoderTargetAngleLeft(1000000000);
@@ -224,6 +234,13 @@ public class Robot extends IterativeRobot {
 //    	SmartDashboard.putDouble("this is the distance", distance);
 //    	SmartDashboard.putDouble("Angle", angle);
 //    	//TODO: test the drive train today and try to get raspi done as well
+    	SmartDashboard.putInt("Left encoder positioin", middleLeft.getEncPosition());
+		SmartDashboard.putDouble("Left error", middleLeft.getError());
+		SmartDashboard.putDouble("Left position", middleLeft.getPosition());
+		SmartDashboard.putDouble("x", drive.imuY());
+//		SmartDashboard.putInt("Right encoder positioin", middleRight.getEncPosition());
+//		SmartDashboard.putDouble("Right error", middleRight.getError());
+//		SmartDashboard.putDouble("Right position", middleRight.getPosition());
     	Timer.delay(0.05);
     	
     }
@@ -234,7 +251,7 @@ public class Robot extends IterativeRobot {
         Strongback.disable();
     }
 
-    
+    //Write a loop for the pid controlers
     
 }
 
