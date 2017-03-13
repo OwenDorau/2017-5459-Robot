@@ -9,32 +9,35 @@ public class ShortcutForEncodersCommand extends Command {
 	double leftTarget;
 	double rightTarget;
 	double target;
+	private boolean kill = false;
 	
 	public ShortcutForEncodersCommand(Drive5459 drive, double target) {
 		this.drive = drive;
 		this.target = target * 325.9493234522016;
-		this.leftTarget = (drive.leftEncoderValue() + target) * 325.9493234522016;
-		this.rightTarget = (drive.rightEncoderValue() + target) * 325.9493234522016;
+		this.drive.setLeftEncoderValue(0);
+		this.drive.setRightEncoderValue(0);
+//		this.leftTarget = drive.leftEncoderValue() + this.target;
+//		this.rightTarget = drive.rightEncoderValue() + this.target;
 	}
 	
 	@Override
 	public boolean execute() {
 		
-		if (leftTarget > drive.leftEncoderValue()) {
-			drive.setSpeedLeft((leftTarget - drive.leftEncoderValue()) * 0.1);
-		}else {
-			drive.setSpeedLeft((drive.leftEncoderValue() - leftTarget) * 0.1);
-		}
+		drive.setSpeedLeft((target - drive.leftEncoderValue()) * 0.00001);
+		drive.setSpeedRight((target - drive.rightEncoderValue()) * 0.00001);
 		
-		if (rightTarget > drive.rightEncoderValue()) {
-			drive.setSpeedRight((rightTarget - drive.rightEncoderValue()) * 0.1);
-		}else {
-			drive.setSpeedRight((drive.rightEncoderValue() - rightTarget) * 0.1);
+		if (Math.abs(this.target - drive.leftEncoderValue()) < 80 || Math.abs(this.target - drive.rightEncoderValue()) < 80) {
+			drive.setDriverEnabled(true);
+			drive.setSpeedRight(0);
+			drive.setSpeedLeft(0);
+			this.kill  = true;
 		}
-		
-		if (Math.abs(leftTarget - drive.leftEncoderValue()) < 20 || Math.abs(rightTarget - drive.rightEncoderValue()) < 20) {
+		if(this.kill){
+			drive.setDriverEnabled(true);
 			return true;
+		
 		}else {
+			drive.setDriverEnabled(false);
 			return false;
 		}
 	}

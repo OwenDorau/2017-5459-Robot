@@ -3,6 +3,7 @@
 package org.frc5459.robot;
 
 import java.util.function.DoubleSupplier;
+//import java.lang.Thread.run;
 
 import org.frc5459.robot.Drive5459.currentGear;
 import org.strongback.Strongback;
@@ -17,6 +18,7 @@ import org.strongback.hardware.Hardware;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
+import com.sun.xml.internal.bind.v2.model.core.ID;
 
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -53,6 +55,8 @@ public class Robot extends IterativeRobot {
 	private int shifts;
 	int ticks = 0;
 	private boolean winning = true;
+	private boolean y = true;
+	private boolean direction = false;
 
 
 
@@ -83,7 +87,7 @@ public class Robot extends IterativeRobot {
     	middleRight.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
     	middleRight.setEncPosition((middleRight.getPulseWidthPosition() & 0xFFF));
     	//middleRight.setAllowableClosedLoopErr(10);
-    	middleRight.reverseSensor(true);
+    	//middleRight.reverseSensor(true);
     	middleRight.configNominalOutputVoltage(+0f, -0f);
     	middleRight.configPeakOutputVoltage(+12f, -12f);
     	topRight.changeControlMode(TalonControlMode.Follower);
@@ -99,6 +103,7 @@ public class Robot extends IterativeRobot {
     	middleLeft.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
     	middleLeft.configNominalOutputVoltage(+0f, -0f);
     	middleLeft.configPeakOutputVoltage(+12f, -12f);
+    	middleLeft.reverseSensor(false);
     	//middleLeft.setAllowableClosedLoopErr(10);
     	topLeft.changeControlMode(TalonControlMode.Follower); //TalonSRX #6
     	topLeft.set(middleLeft.getDeviceID());
@@ -110,7 +115,9 @@ public class Robot extends IterativeRobot {
     	//drive
     	drive = new Drive5459(middleRight, middleLeft, ultraX, ultraY, imu, shifter,topRight, topLeft);
     	
-    	
+    	NetworkTable.setServerMode();
+    	NetworkTable.initialize();
+    	dataBase = NetworkTable.getTable("DataBase");
     	// front = VideoSource.
     }   
     
@@ -118,31 +125,41 @@ public class Robot extends IterativeRobot {
     public void autonomousInit() {
     	Strongback.start(); 
     	//Strongback.submit(new GoToEncoderValueCommand(12));
-    	
+    	//Strongback.submit(new ShortcutForEncodersCommand(drive, 48));
+    	Strongback.submit(new SimpleAuto(drive));
+//    	SmartDashboard.putDouble("leftTarget", (48 * 325.9493234522016) + drive.leftEncoderValue());
+//    	SmartDashboard.putDouble("rightTarget", (48 * 325.9493234522016) + drive.rightEncoderValue());
 //		
 //			drive.setEncoderTargetAngleLeft(10000);
 //			drive.setEncoderTargetAngleRight(10000);
-			SmartDashboard.putInt("encoder positioin", middleLeft.getEncPosition());
-			SmartDashboard.putDouble("error", middleLeft.getError());
-			SmartDashboard.putDouble("position", middleLeft.getPosition());
+//			SmartDashboard.putInt("encoder positioin", middleLeft.getEncPosition());
+//			SmartDashboard.putDouble("error", middleLeft.getError());
+//			SmartDashboard.putDouble("position", middleLeft.getPosition());
     	
+			
     	
     }
     
     @Override
     public void autonomousPeriodic() {
+    	SmartDashboard.putDouble("encoder positioin Left ", drive.leftEncoderValue());
+		SmartDashboard.putDouble("rotaion", imu.getAngleY());
+		SmartDashboard.putDouble("encoder Position Right", drive.rightEncoderValue());
     	//drive.setEncoderTargetAngleLeft(10000);
 		//drive.setEncoderTargetAngleRight(10000);
     	//if (driver.getA().isTriggered()) {
 			
 		//}
+		
+		
+		
     }
     
     @Override
     public void teleopInit() {
     	Strongback.start();
-    	
-    	//Strongback.submit(new TeleopDriveCommand(drive, driver));
+    	drive.setDriverEnabled(true);
+    	//Strongback.submit(new TeleopDriveCommand(drive, driver);
       //SmartDashboard.putData(key, data);
     	//("turning PID controller gains", turnToPID.getGainsFor(2));
     	//SmartDashboard.putData("turning PID controller I", turnToPID.getTarget());
@@ -156,10 +173,10 @@ public class Robot extends IterativeRobot {
     	//middleRight.changeControlMode(TalonControlMode.PercentVbus);
     	//middleLeft.set(1.0);
     	//middleRight.set(1.0);
-    	SmartDashboard.putDouble("This is the velocity", drive.getVelocity());
-    	SmartDashboard.putInt("number of shifts", shifts);
-    	SmartDashboard.putDouble("power", driver.getRightY().read());
-    	SmartDashboard.putDouble("rot", driver.getLeftY().read());
+//    	SmartDashboard.putDouble("This is the velocity", drive.getVelocity());
+//    	SmartDashboard.putInt("number of shifts", shifts);
+//    	SmartDashboard.putDouble("power", driver.getRightY().read());
+//    	SmartDashboard.putDouble("rot", driver.getLeftY().read());
     	if (operator.getRightBumper().isTriggered()) {
     		Strongback.submit(new BucketExtendCommand(bucket));
 		}else if( operator.getLeftBumper().isTriggered()){
@@ -168,46 +185,53 @@ public class Robot extends IterativeRobot {
 		}
 
 
-    	if(operator.getX().isTriggered()){
-    		Strongback.submit(new TurnToCommand(90));
-    	}
+//    	if(operator.getX().isTriggered()){
+//    		Strongback.submit(new TurnToCommand(90, drive));
+//    	}
 
     	
-//    	if (driver.getLeftBumper().isTriggered()) {
-//			Strongback.submit(new ShiftUpCommand(drive, driver));
-//		}
-//    	if (driver.getRightBumper().isTriggered()) {
-//			Strongback.submit(new ShiftDownCommand(drive, driver));
-//		}
+    	if (driver.getLeftBumper().isTriggered()) {
+			Strongback.submit(new ShiftUpCommand(drive, driver));
+		}
+    	if (driver.getRightBumper().isTriggered()) {
+			Strongback.submit(new ShiftDownCommand(drive, driver));
+		}
     	
-    	if (operator.getA().isTriggered()) {
-			
-			drive.setSpeedLeft(0.5);
-			drive.setSpeedRight(0.5);
-
-		}
-    	if (middleLeft.getError() == 0 || middleRight.getError() == 0) {
-			drive.setDriverEnabled(true);
-		}
-    	drive.setDriverEnabled(false);
+//    	if (operator.getA().isTriggered()) {
+//			
+//			drive.setSpeedLeft(0.5);
+//			drive.setSpeedRight(0.5);
+//
+//		}
+//    	if (middleLeft.getError() == 0 || middleRight.getError() == 0) {
+//			drive.setDriverEnabled(true);
+//		}
+    	//drive.setDriverEnabled(false);
     	if (drive.isDriverEnabled()) {
-    		if (driver.getLeftTrigger().read() > 0.7) {
-    			Strongback.submit(new TeleopDriveCommand(drive, driver,true));
-			}else {
-				Strongback.submit(new TeleopDriveCommand(drive, driver,false));
+    		
+			if (driver.getLeftTrigger().read() > 0.7) {
+    			Strongback.submit(new TeleopDriveCommand(drive, driver,0.5/* direction*/ ));
+			}else{
+				Strongback.submit(new TeleopDriveCommand(drive, driver, 1.0 /*direction*/));
 			}
     		
-//    		
+			if(driver.getRightTrigger().read() > 0.7){
+				direction = false;
+			}else {
+				direction = true;
+			}
+//    		if(driver.getRightTrigger().read() > 0.7){
+//		Strongback.submit(new TeleopDriveCommand(drive, driver,0.25, direction));
     	}
-    	
-    	if (driver.getB().isTriggered()) {
-			Strongback.submit(new GoToEncoderValueCommand(24));
-		}
-    	
-    	if (driver.getY().isTriggered()) {
-			drive.setEncoderTargetAngleRight(325.9493234522016*24);
-			drive.setEncoderTargetAngleRight(325.9493234522016*24);
-		}
+//    	
+//    	if (driver.getB().isTriggered()) {
+//			Strongback.submit(new ShortcutForEncodersCommand(drive, 10));
+//		}
+//    	
+//    	if (driver.getY().isTriggered()) {
+//			drive.setEncoderTargetAngleRight(325.9493234522016*24);
+//			drive.setEncoderTargetAngleLeft(325.9493234522016*24);
+//		}
 //		if (operator.getY().isTriggered()) {
 //			Strongback.submit(new GoToEncoderValueCommand(30));
 ////			drive.setEncoderTargetAngleLeft(1000000000);
@@ -248,6 +272,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void disabledInit() {
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
+    	Strongback.killAllCommands();
         Strongback.disable();
     }
 
