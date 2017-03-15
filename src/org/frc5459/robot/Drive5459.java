@@ -4,12 +4,18 @@ package org.frc5459.robot;
 
 import org.strongback.components.DistanceSensor;
 import org.strongback.components.Solenoid;
+import org.strongback.control.TalonController;
 
 import com.ctre.CANTalon;
 
 import com.ctre.CANTalon.TalonControlMode;
+import com.sun.org.apache.bcel.internal.generic.IMUL;
 
 import edu.wpi.first.wpilibj.RobotDrive;
+
+import java.util.function.DoubleToLongFunction;
+
+import javax.sound.midi.VoiceStatus;
 
 import org.frc5459.robot.*;
 
@@ -105,8 +111,11 @@ public class Drive5459 {
 	}
 
 	public void setSpeedRight(double power){
-		rightController.setProfile(1);
-		rightController.changeControlMode(TalonControlMode.PercentVbus);
+		//rightController.setProfile(1);
+		if (!rightController.getControlMode().equals(TalonControlMode.PercentVbus)) {
+			rightController.changeControlMode(TalonControlMode.PercentVbus);
+		}
+		
 		rightController.set(-power);
 		
 
@@ -114,8 +123,11 @@ public class Drive5459 {
 	}
 	
 	public void setSpeedLeft(double power){
-		leftController.setProfile(1);
-		leftController.changeControlMode(TalonControlMode.PercentVbus);
+		//leftController.setProfile(1);
+		if (!leftController.getControlMode().equals(TalonControlMode.PercentVbus)) {
+			leftController.changeControlMode(TalonControlMode.PercentVbus);
+		}
+		
 		leftController.set(power); 
 		
 	}
@@ -124,32 +136,40 @@ public class Drive5459 {
 	 * @param targetAngle
 	 */
 	public void setEncoderTargetAngleRight(double targetAngle){
-		rightController.setProfile(0);
+		//rightController.setProfile(0);
 		rightController.changeControlMode(TalonControlMode.Position);
 		this.targetAngle = targetAngle;
-		this.rightGoal = rightController.getPosition() + targetAngle;
-		rightController.set(rightGoal);
+
+		this.rightGoal = rightController.getEncPosition() + targetAngle;
+		rightController.set(this.rightGoal);
+
 		
 	}
 	//TODO: add the current value to the target
 	public void setEncoderTargetAngleLeft(double targetAngle){
-		leftController.setProfile(0);
+		//leftController.setProfile(0);
 		leftController.changeControlMode(TalonControlMode.Position);
 		this.targetAngle = targetAngle;
 
-		this.leftGoal = leftController.getPosition() + targetAngle;
-		leftController.set(leftGoal);
+		this.leftGoal = leftController.getEncPosition() + targetAngle;
+		leftController.set(this.leftGoal);
+
 
 	}
 	
 	public double rightEncoderValue(){
-		return rightController.getPosition();
+		return rightController.getEncPosition();
 	}
 	
 	public double leftEncoderValue(){
-		return leftController.getPosition();
+		return leftController.getEncPosition();
 	}
-	
+	public void setRightEncoderValue(int newPosition){
+		rightController.setEncPosition(newPosition);
+	}
+	public void setLeftEncoderValue(int newPosition){
+		leftController.setEncPosition(newPosition);
+	}
 	public double getUltrasonicX(){
 		return ultraX.getDistanceInInches();
 	}
@@ -174,13 +194,14 @@ public class Drive5459 {
 	}
 	
 	public double imuX(){
-		return imu.getAngleX();
-	}
-	public double imuY(){
-		return imu.getAngleY();
+		return imu.getRoll();
 	}
 	public double imuZ(){
-		return imu.getAngleZ();
+		return imu.getPitch();
+	}
+	public double imuY(){
+		return imu.getYaw();
+		
 	}
 	
 	public currentGear getCurrentGear(){
@@ -218,5 +239,13 @@ public class Drive5459 {
 		drive.arcadeDrive(power, rotation);
 	}
 	
-
+	public boolean encoderIsInTolerence(){
+		if (rightController.getClosedLoopError() >= Math.abs(rightController.getError()) && 
+				leftController.getClosedLoopError() >= Math.abs(leftController.getError())) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }

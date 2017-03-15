@@ -47,8 +47,8 @@ TurnToCommand turnToCommand;
 	turnToPid.withInputRange(-1, 1); //needs testing
 	turnToPid.withOutputRange(-1, 1); //needs testing
 	turnToPid.withTolerance(1); //needs testing
-	recorder.register("turnToPid", turnToPid.errorChannels());
-	turnToPid.useProfile(2);
+	//recorder.register("turnToPid", turnToPid.errorChannels());
+	//turnToPid.useProfile(2);
 	
 
 	}
@@ -94,5 +94,5 @@ TurnToCommand turnToCommand;
     }
 
 	 */
-	
+
 	

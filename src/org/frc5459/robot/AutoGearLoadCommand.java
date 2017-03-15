@@ -32,7 +32,7 @@ public class AutoGearLoadCommand extends Command {
 		DoubleSupplier FirstTargetAngle= () -> {return (0) ;} ;
 		DoubleConsumer FirstTurnThis  = (x) -> First = x  ;
 		System.out.println("First Supplier and Consumer passed");
-		targetTurn = new TurnToCommand (drive.imuY()-drive.imuY());
+		//targetTurn = new TurnToCommand (FirstTargetAngle , FirstTurnThis);
 		drive.setSpeedRight(-1.0);
 		drive.setSpeedLeft(-1.0);
 			ultraSonicX = drive.getUltrasonicX();
@@ -51,7 +51,7 @@ public class AutoGearLoadCommand extends Command {
 		DoubleSupplier SecondTargetAngle= () -> {return (45) ;} ;
 		DoubleConsumer SecondTurnThis  = (x) -> Second = x  ;
 		System.out.println("Second Supplier and Consumer passed");
-		targetTurn = new TurnToCommand (45);
+		//targetTurn = new TurnToCommand (SecondTargetAngle , SecondTurnThis);
 		if(second = true){
 			Strongback.submit(targetTurn);
 			ultraYDistance = drive.getUltrasonicY();
